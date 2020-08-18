@@ -25,7 +25,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import * as PropTypes from "prop-types";
-
+import './Header.css'
 
 const theme = createMuiTheme({
     palette: {
@@ -50,6 +50,9 @@ const css  =  {
         color:'#ffffff',
         width: '300px'
     },
+}
+
+const costumStyles = {
     content: {
         top: '50%',
         left: '50%',
@@ -78,6 +81,7 @@ class Header extends Component{
         super();
         this.state = {
             modalIsOpen: false,
+            value:0,
         }
     }
 
@@ -87,6 +91,10 @@ class Header extends Component{
 
     closeModal =()=>{
         this.setState({ modalIsOpen: false })
+    }
+
+    onTabChange=(event,value)=>{
+        this.setState({value})
     }
 
 
@@ -124,7 +132,24 @@ class Header extends Component{
                     </AppBar>
                     <Modal ariaHideApp={false} isOpen={this.state.modalIsOpen}
                            contentLabel="Login" onRequestClose={this.closeModal}
-                            style={css.content}>
+                            style={costumStyles}>
+                        <Tabs className="tabs" value={this.state.value} onChange={this.onTabChange}>
+                            <Tab label="LOGIN"/>
+                            <Tab label="SIGNUP"/>
+                        </Tabs>
+                        {this.state.value === 0 &&
+                        <TabContainer>
+                            <FormControl required>
+                                <InputLabel htmlFor="contactno">Contact No.</InputLabel>
+                                <Input id="contactno" type="text"/>
+                            </FormControl>
+                            <br/>
+                            <FormControl required>
+                                <InputLabel htmlFor="password">Password</InputLabel>
+                                <Input id="password" type="password"/>
+                            </FormControl><br/><br/>
+                            <Button variant="contained" color="primary">LOGIN</Button>
+                        </TabContainer>}
                     </Modal>
 
                 </Box>
