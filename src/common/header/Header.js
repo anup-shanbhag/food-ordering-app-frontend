@@ -82,6 +82,10 @@ class Header extends Component{
         this.state = {
             modalIsOpen: false,
             value:0,
+            contactnoRequired:'dispNone',
+            passwordRequired:'dispNone',
+            contactno:"",
+            password:"",
         }
     }
 
@@ -96,8 +100,18 @@ class Header extends Component{
     onTabChange=(event,value)=>{
         this.setState({value})
     }
+    onLoginClick=()=>{
+        this.state.contactno === "" ? this.setState({contactnoRequired:'dispBlock'}) : this.setState({contactnoRequired:'dispNone'})
+        this.state.password === "" ? this.setState({passwordRequired:'dispBlock'}) : this.setState({passwordRequired:'dispNone'})
 
+    }
 
+    onContactNumberChange=(e)=>{
+        this.setState({contactno:e.target.value})
+    }
+    onPasswordChange=(e)=>{
+        this.setState({password:e.target.value})
+    }
 
         render()
         {
@@ -141,14 +155,16 @@ class Header extends Component{
                         <TabContainer>
                             <FormControl required>
                                 <InputLabel htmlFor="contactno">Contact No.</InputLabel>
-                                <Input id="contactno" type="text"/>
+                                <Input id="contactno" type="text" contactno={this.state.contactno} onChange={this.onContactNumberChange}/>
+                                <FormHelperText className={this.state.contactnoRequired}><span className="red">required</span></FormHelperText>
                             </FormControl>
                             <br/>
                             <FormControl required>
                                 <InputLabel htmlFor="password">Password</InputLabel>
-                                <Input id="password" type="password"/>
+                                <Input id="password" type="password" password={this.state.password} onChange={this.onPasswordChange}/>
+                                <FormHelperText className={this.state.passwordRequired}><span className="red">required</span></FormHelperText>
                             </FormControl><br/><br/>
-                            <Button variant="contained" color="primary">LOGIN</Button>
+                            <Button variant="contained" color="primary" onClick={this.onLoginClick}>LOGIN</Button>
                         </TabContainer>}
                     </Modal>
 
