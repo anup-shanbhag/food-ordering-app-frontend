@@ -5,7 +5,6 @@ import {
     Box,
     Typography,
     GridListTile,
-    GridListTileBar,
     GridList,
     CardActions,
     IconButton
@@ -24,9 +23,6 @@ const useStyles = makeStyles({
         pointerEvents: "none"
     },
     select: {
-        /*zIndex: 1000,
-        position: 'relative',
-        padding: "0",*/
         marginLeft: "auto",
         marginRight: "1%"
     },
@@ -50,7 +46,6 @@ export default function Addresses(props) {
     const [selected, setSelected] = React.useState([(props.addresses !== null && props.addresses.length > 0) ? new Array(props.addresses.length).fill(false)
         : []]);
     const classes = useStyles();
-    let active = true;
     const getClass = (active) => (active) ? classes.active : classes.inactive;
     const onClick = (e) => {
         let newArr = [...selected].fill(false);

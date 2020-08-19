@@ -18,7 +18,6 @@ export default function AddressForm(props) {
     const [pincode, setPincode] = React.useState("");
     const [isSaveClicked, setSaveClicked] = React.useState(false);
     const classes = useStyles();
-    const getClass = () => (props.active) ? classes.active : classes.inactive;
     const onFlatnameChanged = (e) => setFlatname(e.target.value);
     const onLocalityChanged = (e) => setLocality(e.target.value);
     const onCityChanged = (e) => setCity(e.target.value);
@@ -34,7 +33,7 @@ export default function AddressForm(props) {
         console.log(pincode);
     };
     return (
-        <Box display="flex" flexDirection="column" padding="2%" margin="2%">
+        <Box display="flex" flexDirection="column" padding="0.5%" margin="0.5%">
             <FormControl required margin="dense" size="small" variant="standard">
                 <InputLabel htmlFor="flatname">Flat / Building No</InputLabel>
                 <Input id="flatname" type="text" value={flatname} onChange={onFlatnameChanged}/>

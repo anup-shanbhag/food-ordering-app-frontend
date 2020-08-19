@@ -26,9 +26,9 @@ export default class Checkout extends Component {
             case 0:
                 return (
                     <Box><AppBar position="static">
-                        <Tabs value={this.state.value} onChange={this.handleSwitch}>
-                            <Tab value={0} label="EXISTING ADDRESS"/>
-                            <Tab value={1} label="NEW ADDRESS"/>
+                        <Tabs value={this.state.activeTab} onChange={this.handleSwitch}>
+                            <Tab label="EXISTING ADDRESS"/>
+                            <Tab label="NEW ADDRESS"/>
                         </Tabs>
                     </AppBar>
                         <Box display={this.state.activeTab===0?"block":"none"}><Addresses addresses={addresses}/></Box>
@@ -45,8 +45,8 @@ export default class Checkout extends Component {
 
     render() {
         return (
-            <Box display="flex" flexDirection="row" width="100%" padding="1%" margin="1%">
-                <Box display="block" width="70%" padding="1%" marginLeft="1%" marginRight="auto" marginTop="2%">
+            <Box display="flex" flexDirection="row" width="96%%" padding="1%" margin="1%">
+                <Box display="block" width="70%" padding="1%" marginLeft="0.1%" marginRight="auto" marginTop="0.1%">
                     <Stepper activeStep={this.state.activeStep} orientation="vertical">
                         {this.getSteps().map((label, index) => (
                             <Step key={label}>
@@ -72,7 +72,7 @@ export default class Checkout extends Component {
                         </Box>) : ""
                     }
                 </Box>
-                <Box display="block" width="25%" padding="1%" marginRight="3%" marginLeft="1%" marginTop="2%">
+                <Box display="block" width="27%" padding="1%" marginRight="0.1%" marginLeft="auto%" marginTop="2%">
                     <OrderSummary/>
                 </Box>
             </Box>
