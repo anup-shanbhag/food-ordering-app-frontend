@@ -8,7 +8,7 @@ export default function Payment(props) {
         setPaymentMode(e.target.value);
     }
     return (
-        <Box padding="2%" margin="2%">
+        <Box padding="0.5%" margin="0.5%">
             <FormControl component="fieldset">
                 <FormLabel component="legend">Select Mode of Payment</FormLabel>
                 <RadioGroup name="Payment" value={paymentMode} onChange={onPaymentModeChanged}>
