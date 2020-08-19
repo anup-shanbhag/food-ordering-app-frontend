@@ -4,6 +4,7 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import Card from "@material-ui/core/Card";
+import "../../../node_modules/font-awesome/css/font-awesome.css"
 
 // Component for home restaurant card
 export default function HomeCard(props) {
@@ -31,7 +32,7 @@ export default function HomeCard(props) {
                             <i className="fa fa-star"/> {props.restaurant.customer_rating} ({props.restaurant.number_customers_rated})
                         </Typography>
                         <Typography variant="body1" className="card-price">
-                            <i className="fa fa-inr" aria-hidden="true"/> {props.restaurant.average_price} for two
+                            <i className="fa fa-inr" aria-hidden="true"/>{props.restaurant.average_price} for two
                         </Typography>
                     </CardContent>
                 </CardActionArea>

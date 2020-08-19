@@ -21,3 +21,13 @@
     padding: 5px 15px;
     color: white;
 }
+
+.card-price {
+    padding: 5px;
+}
+
+.loading-spinner {
+    top: 50%;
+    position: absolute;
+    left: 45%;
+}

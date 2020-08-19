@@ -2,6 +2,9 @@ import React, {Component} from "react";
 import HomeCard from "./HomeCard";
 import './Home.css'
 import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
+import Header from "../../common/header/Header";
+import "../../../node_modules/font-awesome/css/font-awesome.css"
 
 class Home extends Component {
 
@@ -14,30 +17,29 @@ class Home extends Component {
     }
 
     componentDidMount() {
+        this.mounted = true;
         this.getRestaurants();
     }
 
     render() {
-
-
-        let restaurantDetails = {};
-        restaurantDetails.url = "https://b.zmtcdn.com/data/res_imagery/42597_RESTAURANT_obp1.jpg";
-        restaurantDetails.id = "1dd86f90-a296-11e8-9a3a-720006ceb890";
-        restaurantDetails.customer_rating = 4.9;
-        restaurantDetails.name = "3 Wise Monkeys";
-        restaurantDetails.categories = "Chinese, Continental, Indian, Italian, Snacks";
-        restaurantDetails.number_customers_rated = 28;
-        restaurantDetails.average_price = 1200;
-
         return (
             <div>
-                <div className="card-container">
-                    {this.state.restaurants.map(restaurant => (
-                        <Box key={restaurant.id} className="card-main">
-                            <HomeCard restaurant={restaurant}/>
-                        </Box>
-                    ))}
-                </div>
+                {this.mounted === true ?
+                    <div>
+                        <Header/>
+                        {this.state.loading === true ?
+                            <Typography className="loading-spinner" variant="h4" color="textSecondary">loading...</Typography>
+                           : ""
+                        }
+                        <div className="card-container">
+                            {this.state.restaurants.map(restaurant => (
+                                <Box key={restaurant.id} className="card-main">
+                                    <HomeCard restaurant={restaurant}/>
+                                </Box>
+                            ))}
+                        </div>
+                    </div>
+                    : ""}
             </div>
         );
     }
@@ -47,6 +49,7 @@ class Home extends Component {
         const headers = {'Accept': 'application/json'}
         let that = this;
         let url = "http://localhost:8080/api/restaurant";
+        that.setState({loading:true})
         return fetch(url,
             {method: 'GET', headers}
         ).then((response) => {
@@ -54,6 +57,7 @@ class Home extends Component {
         }).then((jsonResponse) => {
             that.setState({
                 restaurants: jsonResponse.restaurants,
+                loading: false
             })
         }).catch((error) => {
             console.log('error user data', error);
