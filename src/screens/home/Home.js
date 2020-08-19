@@ -33,7 +33,7 @@ class Home extends Component {
                         }
                         <div className="card-container">
                             {this.state.restaurants.map(restaurant => (
-                                <Box key={restaurant.id} className="card-main">
+                                <Box key={restaurant.id} className="card-main" onClick={() => this.restaurantDetails(restaurant.id)}>
                                     <HomeCard restaurant={restaurant}/>
                                 </Box>
                             ))}
@@ -62,6 +62,10 @@ class Home extends Component {
         }).catch((error) => {
             console.log('error user data', error);
         });
+    }
+
+    restaurantDetails = (restaurantId) => {
+        this.props.history.push("/restaurant/"+restaurantId);
     }
 }
 
