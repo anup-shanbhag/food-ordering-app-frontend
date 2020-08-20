@@ -1,0 +1,33 @@
+.card-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin: 30px auto;
+}
+
+.card-main {
+    width: 20%;
+    margin: 25px 25px;
+}
+
+.card-section2 {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 16px 16px 16px !important;
+}
+
+.card-rating {
+    background: #eacc5d;
+    padding: 5px 15px;
+    color: white;
+}
+
+.card-price {
+    padding: 5px;
+}
+
+.loading-spinner {
+    top: 50%;
+    position: absolute;
+    left: 45%;
+}
