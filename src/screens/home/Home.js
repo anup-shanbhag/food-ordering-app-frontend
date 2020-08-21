@@ -26,7 +26,7 @@ class Home extends Component {
             <div>
                 {this.mounted === true ?
                     <div>
-                        <Header/>
+                        <Header searchHandler={this.searchHandler} />
                         {this.state.loading === true ?
                             <Typography className="loading-spinner" variant="h4" color="textSecondary">loading...</Typography>
                            : ""
@@ -66,6 +66,30 @@ class Home extends Component {
 
     restaurantDetails = (restaurantId) => {
         this.props.history.push("/restaurant/"+restaurantId);
+    }
+
+    searchHandler = (event) => {
+        let that = this;
+        const headers = {'Accept': 'application/json'}
+        let url =  'http://localhost:8080/api/restaurant/name/' + event.target.value;
+        that.setState({loading:true})
+        if(event.target.value===""){
+            this.getRestaurants();
+        }
+        else {
+            return fetch(url,
+                {method: 'GET', headers}
+            ).then((response) => {
+                return response.json();
+            }).then((jsonResponse) => {
+                this.setState({
+                    restaurants: jsonResponse.restaurants,
+                    loading: false
+                })
+            }).catch((error) => {
+                console.log('error user data', error);
+            });
+        }
     }
 }
 
