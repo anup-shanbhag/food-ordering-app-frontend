@@ -4,10 +4,10 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import Card from "@material-ui/core/Card";
-import "../../../node_modules/font-awesome/css/font-awesome.css"
+import "font-awesome/css/font-awesome.css"
 
 // Component for home restaurant card
-export default function HomeCard(props) {
+export default function HomeRCard(props) {
 
     return (
             <Card>

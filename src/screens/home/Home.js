@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import HomeCard from "./HomeCard";
+import HomeRCard from "../../common/home/HomeRCard";
 import './Home.css'
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
@@ -33,8 +33,8 @@ class Home extends Component {
                         }
                         <div className="card-container">
                             {this.state.restaurants.map(restaurant => (
-                                <Box key={restaurant.id} className="card-main">
-                                    <HomeCard restaurant={restaurant}/>
+                                <Box key={restaurant.id} className="card-main" onClick={() => this.restaurantDetails(restaurant.id)}>
+                                    <HomeRCard restaurant={restaurant}/>
                                 </Box>
                             ))}
                         </div>
@@ -62,6 +62,10 @@ class Home extends Component {
         }).catch((error) => {
             console.log('error user data', error);
         });
+    }
+
+    restaurantDetails = (restaurantId) => {
+        this.props.history.push("/restaurant/"+restaurantId);
     }
 
     searchHandler = (event) => {
