@@ -85,6 +85,7 @@ class Header extends Component{
             value:0,
             contactno:"",
             contactnoRequired:'dispNone',
+            loginContactInvalid:'dispNone',
             contactInvalid:'dispNone',
             password:"",
             passwordRequired:'dispNone',
@@ -100,12 +101,39 @@ class Header extends Component{
             email:"",
             emailRequired:'dispNone',
             emailInvalid:'dispNone',
-            id:"",
+            signUpError:{},
+            signUpErrorSpan:'dispNone',
+            loginError:{},
+            loginErrorSpan:'dispNone',
+            loggedIn: false,
         }
     }
 
     openModalHandler = () => {
-            this.setState({ modalIsOpen: true })
+            this.setState({
+                modalIsOpen: true,contactno:"",
+                contactnoRequired:'dispNone',
+                loginContactInvalid:'dispNone',
+                contactInvalid:'dispNone',
+                password:"",
+                passwordRequired:'dispNone',
+                signUpPassword:"",
+                signUpPasswordRequired:'dispNone',
+                signUpPasswordInvalid:'dispNone',
+                signUpContactno:"",
+                signUpcontactnoRequired:'dispNone',
+                signUpcontactInvalid:'dispNone',
+                firstName:"",
+                firstNameRequired:'dispNone',
+                lastName:"",
+                email:"",
+                emailRequired:'dispNone',
+                emailInvalid:'dispNone',
+                signUpError:{},
+                signUpErrorSpan:'dispNone',
+                loginError:{},
+                loginErrorSpan:'dispNone',
+            })
     }
 
     closeModal =()=>{
@@ -113,11 +141,43 @@ class Header extends Component{
     }
 
     onTabChange=(event,value)=>{
-        this.setState({value})
+        this.setState({value});
+
     }
     onLoginClick=()=>{
-        this.state.contactno === "" ? this.setState({contactnoRequired:'dispBlock'}) : this.setState({contactnoRequired:'dispNone'})
-        this.state.password === "" ? this.setState({passwordRequired:'dispBlock'}) : this.setState({passwordRequired:'dispNone'})
+        let isAnyRequiredFieldEmpty=false;
+        if(this.isContactNumberEmptyForLogin(this.state.contactno)){
+            isAnyRequiredFieldEmpty=true;
+        }
+        if(this.isPasswordEmptyForLogin(this.state.password)){
+            isAnyRequiredFieldEmpty=true;
+        }
+        if(isAnyRequiredFieldEmpty===false){
+
+            if(this.isValidContactNoForLogin(this.state.contactno)){
+                let that= this;
+                const headers={'Accept':'application/json','authorization':"Basic " + window.btoa(this.state.contactno + ":" + this.state.password)}
+                fetch("http://localhost:8080/api/customer/login",{method:'POST',headers}).then(function (response){
+                    if(response.status === 200){
+                        console.log("log in successful");
+                        that.setState({loginErrorSpan:'dispNone'})
+                        that.setState({value:0});
+                        that.setState({ loggedIn: true });
+                        that.closeModal();
+                        return response.json();
+                    }else{
+                        throw response;
+                    }
+                }).catch( err => {
+                    err.text().then( errorMessage => {
+                        that.setState({loginErrorSpan:'dispBlock'})
+                        that.setState({loginError:JSON.parse(errorMessage)})
+                        console.log("Login failed: "+ that.state.loginError.message);
+                    })
+                })
+            }
+        }
+
     }
     onSignUpClick=()=> {
         let isAnyRequiredFieldEmpty=false;
@@ -156,10 +216,22 @@ class Header extends Component{
             const headers = {'Accept': 'application/json','Content-Type': 'application/json'}
             fetch("http://localhost:8080/api/customer/signup",{method:'POST',headers,body:dataSignUp}).then(function (response){
                 if(response.status === 201){
-                    console.log("Sign up succsessful");
+                    console.log("Sign up successful");
+                    that.setState({signUpErrorSpan:'dispNone'})
+                    that.setState({signUpError:{}})
                     that.setState({value:0});
+                    return response.json();
+                }else{
+                    throw response;
                 }
+            }).catch( err => {
+                err.text().then( errorMessage => {
+                    that.setState({signUpErrorSpan:'dispBlock'})
+                    that.setState({signUpError:JSON.parse(errorMessage)})
+
+                })
             })
+
         }
     }
 
@@ -191,6 +263,15 @@ class Header extends Component{
             return false;
         }
     }
+    isContactNumberEmptyForLogin =(contactno)=>{
+        if(contactno===""){
+            this.setState({contactnoRequired:'dispBlock'})
+            return true;
+        }else{
+            this.setState({contactnoRequired:'dispNone'})
+            return false;
+        }
+    }
     isPasswordEmpty=(password)=>{
         if(password===""){
             this.setState({signUpPasswordRequired:'dispBlock'})
@@ -201,6 +282,16 @@ class Header extends Component{
         }
     }
 
+    isPasswordEmptyForLogin=(password)=>{
+        console.log("invoking password empty check: " + password.length )
+        if(password===""){
+            this.setState({passwordRequired:'dispBlock'})
+            return true;
+        }else{
+            this.setState({passwordRequired:'dispNone'})
+            return false;
+        }
+    }
     isEmailIdValid = (email) =>{
         let isValid = EmailVaildator.validate(email)
         if(!isValid && !this.isEmailEmpty(email)){
@@ -219,6 +310,17 @@ class Header extends Component{
             return true;
         }else{
             this.setState({signUpcontactInvalid:'dispNone'})
+            return false;
+        }
+    }
+
+    isValidContactNoForLogin =(contactno)=>{
+        const isValidContactNo = new RegExp('^\\d{10}$');
+        if(isValidContactNo.test(contactno)){
+            this.setState({loginContactInvalid:'dispNone'});
+            return true;
+        }else{
+            this.setState({loginContactInvalid:'dispBlock'});
             return false;
         }
     }
@@ -303,13 +405,16 @@ class Header extends Component{
                                 <InputLabel htmlFor="contactno">Contact No.</InputLabel>
                                 <Input id="contactno" type="text" contactno={this.state.contactno} onChange={this.onContactNumberChange}/>
                                 <FormHelperText className={this.state.contactnoRequired}><span className="red">required</span></FormHelperText>
+                                <FormHelperText className={this.state.loginContactInvalid}><span className="red">Invalid Contact</span></FormHelperText>
                             </FormControl>
                             <br/>
                             <FormControl required>
                                 <InputLabel htmlFor="password">Password</InputLabel>
                                 <Input id="password" type="password" password={this.state.password} onChange={this.onPasswordChange}/>
                                 <FormHelperText className={this.state.passwordRequired}><span className="red">required</span></FormHelperText>
-                            </FormControl><br/><br/>
+                            </FormControl><br/>
+                            <FormHelperText className={this.state.loginErrorSpan}><span className="red">{this.state.loginError.message}</span></FormHelperText>
+                            <br/><br/>
                             <Button variant="contained" color="primary" onClick={this.onLoginClick}>LOGIN</Button>
                         </TabContainer>}
                         {this.state.value ===1 &&
@@ -348,8 +453,10 @@ class Header extends Component{
                                 <Input id="contactno" type="text" contactno={this.state.signUpContactno} onChange={this.onSignUpContactNumberChange}/>
                                 <FormHelperText className={this.state.signUpcontactnoRequired}><span className="red">required</span></FormHelperText>
                                 <FormHelperText className={this.state.signUpcontactInvalid}><span className="red">Contact No. must contain only numbers and must be 10 digits long</span></FormHelperText>
-                            </FormControl>
+                            </FormControl><br/>
+                            <FormHelperText className={this.state.signUpErrorSpan} ><span className="red">{this.state.signUpError.message}</span></FormHelperText>
                             <br/><br/>
+
                             <Button variant="contained" color="primary" onClick={this.onSignUpClick}>SIGNUP</Button>
                         </TabContainer>
 
