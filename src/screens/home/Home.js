@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import HomeCard from "./HomeCard";
+import HomeRCard from "../../common/utils/HomeRCard";
 import './Home.css'
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
@@ -34,7 +34,7 @@ class Home extends Component {
                         <div className="card-container">
                             {this.state.restaurants.map(restaurant => (
                                 <Box key={restaurant.id} className="card-main" onClick={() => this.restaurantDetails(restaurant.id)}>
-                                    <HomeCard restaurant={restaurant}/>
+                                    <HomeRCard restaurant={restaurant}/>
                                 </Box>
                             ))}
                         </div>

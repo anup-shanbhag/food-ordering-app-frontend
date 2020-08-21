@@ -1,0 +1,33 @@
+.rcard-main {
+    padding: 25px;
+    background: #e7e7e7;
+    overflow: hidden;
+    display: flex;
+}
+
+.rcard-left {
+    width: 20%;
+}
+
+.rcard-img {
+    width: 300px;
+    height: 250px;
+}
+
+.rcard-right {
+    padding: 10px 80px;
+    width: 70%;
+}
+
+.upper-case {
+    text-transform: uppercase;
+}
+
+.rcard-category {
+    font-weight: bold;
+}
+
+.rcard-right-bottom {
+    display: flex;
+    justify-content: space-between;
+}
