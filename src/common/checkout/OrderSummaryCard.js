@@ -3,7 +3,7 @@ import {Card, CardContent, Button, Typography, FormControl, CardActions, Divider
 import OrderItem from "../order/OrderItem";
 import "font-awesome/css/font-awesome.css"
 
-export default function OrderSummary(props){
+export default function OrderSummaryCard(props){
 
     const onClickPlaceOrder = () => {};
 

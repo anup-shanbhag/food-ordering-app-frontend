@@ -2,7 +2,7 @@ import React from 'react';
 import {Box, FormControl, FormLabel, Radio, RadioGroup, FormControlLabel, Typography} from '@material-ui/core';
 
 
-export default function Payment(props) {
+export default function PaymentOptions(props) {
     const [paymentMode, setPaymentMode] = React.useState("");
     const onPaymentModeChanged = (e) => {
         setPaymentMode(e.target.value);

@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-    Card,
-    CardContent,
-    Box,
-    Typography,
-    GridListTile,
-    GridList,
-    CardActions,
-    IconButton
-} from '@material-ui/core';
+import {Card, CardContent, Box, Typography, GridListTile, GridList, CardActions, IconButton} from '@material-ui/core';
 import {CheckCircleRounded} from "@material-ui/icons";
 import {makeStyles} from '@material-ui/core/styles';
 
@@ -50,7 +41,7 @@ const useStyles = makeStyles({
     }
 });
 
-export default function Addresses(props) {
+export default function AddressesGrid(props) {
     const [selected, setSelected] = React.useState(
         (props.addresses !== null && props.addresses.length > 0) ?
             [true, ...new Array(props.addresses.length - 1).fill(false)] : []

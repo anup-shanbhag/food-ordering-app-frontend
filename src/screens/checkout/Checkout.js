@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import '../../common/checkout/Addresses'
+import '../../common/checkout/AddressesGrid'
 import {Box, Stepper, Step, StepLabel, StepContent, Button, Tabs, Typography, AppBar, Tab} from "@material-ui/core";
-import Addresses from "../../common/checkout/Addresses";
-import Payment from "../../common/checkout/Payment";
+import AddressesGrid from "../../common/checkout/AddressesGrid";
+import PaymentOptions from "../../common/checkout/PaymentOptions";
 import {addresses, paymentMethods, states, order} from "../../common/checkout/Test";
-import AddressForm from "../../common/checkout/AddressForm";
-import OrderSummary from "../../common/checkout/OrderSummary";
+import SaveAddressForm from "../../common/checkout/SaveAddressForm";
+import OrderSummaryCard from "../../common/checkout/OrderSummaryCard";
 import Header from "../../common/header/Header";
 
 export default class Checkout extends Component {
@@ -32,12 +32,12 @@ export default class Checkout extends Component {
                             <Tab label="NEW ADDRESS"/>
                         </Tabs>
                     </AppBar>
-                        <Box display={this.state.activeTab===0?"block":"none"}><Addresses addresses={addresses}/></Box>
-                        <Box display={this.state.activeTab===1?"block":"none"}><AddressForm states={states}/></Box>
+                        <Box display={this.state.activeTab===0?"block":"none"}><AddressesGrid addresses={addresses}/></Box>
+                        <Box display={this.state.activeTab===1?"block":"none"}><SaveAddressForm states={states}/></Box>
                     </Box>
                 );
             case 1:
-                return (<Payment paymentModes={paymentMethods}/>);
+                return (<PaymentOptions paymentModes={paymentMethods}/>);
             default:
                 return 'Unknown step';
         }
@@ -77,7 +77,7 @@ export default class Checkout extends Component {
                         }
                     </Box>
                     <Box width="27%" padding="1%" >
-                        <OrderSummary order={order}/>
+                        <OrderSummaryCard order={order}/>
                     </Box>
                 </Box>
             </Box>

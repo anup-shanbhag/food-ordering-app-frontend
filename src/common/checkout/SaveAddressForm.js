@@ -10,7 +10,7 @@ const useStyles = makeStyles({
         display: 'none'
     }
 });
-export default function AddressForm(props) {
+export default function SaveAddressForm(props) {
     const [flatname, setFlatname] = React.useState("");
     const [locality, setLocality] = React.useState("");
     const [city, setCity] = React.useState("");
