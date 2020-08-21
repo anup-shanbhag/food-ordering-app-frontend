@@ -66,7 +66,6 @@ class Home extends Component {
 
     searchHandler = (event) => {
         let that = this;
-        let filteredRestaurants = null;
         const headers = {'Accept': 'application/json'}
         let url =  'http://localhost:8080/api/restaurant/name/' + event.target.value;
         that.setState({loading:true})
