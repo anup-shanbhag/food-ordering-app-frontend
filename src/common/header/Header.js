@@ -26,6 +26,7 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import * as PropTypes from "prop-types";
 import './Header.css'
+import * as EmailVaildator from "email-validator";
 
 const theme = createMuiTheme({
     palette: {
@@ -84,13 +85,22 @@ class Header extends Component{
             value:0,
             contactno:"",
             contactnoRequired:'dispNone',
+            contactInvalid:'dispNone',
             password:"",
             passwordRequired:'dispNone',
+            signUpPassword:"",
+            signUpPasswordRequired:'dispNone',
+            signUpPasswordInvalid:'dispNone',
+            signUpContactno:"",
+            signUpcontactnoRequired:'dispNone',
+            signUpcontactInvalid:'dispNone',
             firstName:"",
             firstNameRequired:'dispNone',
             lastName:"",
             email:"",
             emailRequired:'dispNone',
+            emailInvalid:'dispNone',
+            id:"",
         }
     }
 
@@ -109,18 +119,133 @@ class Header extends Component{
         this.state.contactno === "" ? this.setState({contactnoRequired:'dispBlock'}) : this.setState({contactnoRequired:'dispNone'})
         this.state.password === "" ? this.setState({passwordRequired:'dispBlock'}) : this.setState({passwordRequired:'dispNone'})
     }
-    onSignUpClick=()=>{
-        this.state.firstName === "" ? this.setState({firstNameRequired:'dispBlock'}) : this.setState({firstNameRequired:'dispNone'})
-        this.state.email === "" ? this.setState({emailRequired:'dispBlock'}): this.setState({emailRequired:'dispNone'})
-        this.state.password === "" ? this.setState({passwordRequired:'dispBlock'}) : this.setState({passwordRequired:'dispNone'})
-        this.state.contactno === "" ? this.setState({contactnoRequired:'dispBlock'}) : this.setState({contactnoRequired:'dispNone'})
+    onSignUpClick=()=> {
+        let isAnyRequiredFieldEmpty=false;
+        let isAnyValidationFailed=true;
+        if (this.isFirstNameEmpty(this.state.firstName)) {
+            isAnyRequiredFieldEmpty = true;
+        }
+        if (this.isPasswordEmpty(this.state.signUpPassword)) {
+            isAnyRequiredFieldEmpty = true;
+        }
+        if (this.isContactNumberEmpty(this.state.signUpContactno)) {
+            isAnyRequiredFieldEmpty = true;
+        }
+        if (this.isEmailEmpty(this.state.email)) {
+            isAnyRequiredFieldEmpty = true;
+        }
+        if (!this.isEmailIdValid(this.state.email)) {
+            isAnyValidationFailed = false;
+        }
+        if (!this.isPasswordValid(this.state.signUpPassword)) {
+            isAnyValidationFailed = false;
+        }
+        if (!this.isValidContactNo(this.state.signUpContactno)) {
+            isAnyValidationFailed = false;
+        }
+        if(isAnyValidationFailed===false && isAnyRequiredFieldEmpty===false){
+            let that=this;
+            console.log("making api call");
+            let dataSignUp = JSON.stringify({
+                "email_address": this.state.email,
+                "first_name": this.state.firstName,
+                "last_name": this.state.lastName,
+                "contact_number": this.state.signUpContactno,
+                "password": this.state.signUpPassword,
+            })
+            const headers = {'Accept': 'application/json','Content-Type': 'application/json'}
+            fetch("http://localhost:8080/api/customer/signup",{method:'POST',headers,body:dataSignUp}).then(function (response){
+                if(response.status === 201){
+                    console.log("Sign up succsessful");
+                    that.setState({value:0});
+                }
+            })
+        }
+    }
+
+    isFirstNameEmpty =(firstname) =>{
+        if(firstname===""){
+            this.setState({firstNameRequired:'dispBlock'})
+            return true;
+        }else{
+            this.setState({firstNameRequired:'dispNone'})
+            return false;
+        }
+    }
+
+    isEmailEmpty =(email)=>{
+        if(email===""){
+            this.setState({emailRequired:'dispBlock'})
+            return true;
+        }else{
+            this.setState({emailRequired:'dispNone'})
+            return false;
+        }
+    }
+    isContactNumberEmpty =(contactno)=>{
+        if(contactno===""){
+            this.setState({signUpcontactnoRequired:'dispBlock'})
+            return true;
+        }else{
+            this.setState({signUpcontactnoRequired:'dispNone'})
+            return false;
+        }
+    }
+    isPasswordEmpty=(password)=>{
+        if(password===""){
+            this.setState({signUpPasswordRequired:'dispBlock'})
+            return true;
+        }else{
+            this.setState({signUpPasswordRequired:'dispNone'})
+            return false;
+        }
+    }
+
+    isEmailIdValid = (email) =>{
+        let isValid = EmailVaildator.validate(email)
+        if(!isValid && !this.isEmailEmpty(email)){
+            this.setState({emailInvalid:'dispBlock'})
+            return false;
+        }else{
+            this.setState({emailInvalid:'dispNone'})
+            return true;
+        }
+    }
+
+    isValidContactNo =(contactno)=>{
+        const isValidContactNo = new RegExp('^\\d{10}$');
+        if(!isValidContactNo.test(contactno) && !this.isContactNumberEmpty(contactno)){
+            this.setState({signUpcontactInvalid:'dispBlock'})
+            return true;
+        }else{
+            this.setState({signUpcontactInvalid:'dispNone'})
+            return false;
+        }
+    }
+
+    isPasswordValid =(password) =>{
+        console.log("isPasswordValid: " + password);
+        const isValidPassword = new RegExp('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$');
+        if(!isValidPassword.test(password) && !this.isPasswordEmpty(password)){
+            this.setState({signUpPasswordInvalid:'dispBlock'})
+            return false;
+        }else{
+            this.setState({signUpPasswordInvalid:'dispNone'})
+            return true;
+        }
     }
 
     onContactNumberChange=(e)=>{
         this.setState({contactno:e.target.value})
     }
+    onSignUpContactNumberChange=(e)=>{
+        this.setState({signUpContactno:e.target.value})
+    }
     onPasswordChange=(e)=>{
         this.setState({password:e.target.value})
+    }
+    onSignUpPasswordChange=(e)=>{
+        this.setState({signUpPassword:e.target.value})
     }
     onChangeOfFirstName=(e)=>{
         this.setState({firstName:e.target.value})
@@ -191,31 +316,38 @@ class Header extends Component{
                         <TabContainer>
                             <FormControl>
                                 <InputLabel htmlFor="firstName">First Name</InputLabel>
-                                <Input id="firstName" type="text" firstName={this.state.firstName} onChange={this.onChangeOfFirstName}/>
+                                <Input id="firstName" type="text" firstname={this.state.firstName} onChange={this.onChangeOfFirstName}/>
                                 <FormHelperText className={this.state.firstNameRequired}><span className="red">required</span></FormHelperText>
                             </FormControl>
                             <br/><br/>
                             <FormControl>
                                 <InputLabel  htmlFor="lastName" >Last Name</InputLabel>
-                                <Input id="lastName" type="text" lastName={this.state.lastName} onChange={this.onChangeOfLastName}/>
+                                <Input id="lastName" type="text" lastname={this.state.lastName} onChange={this.onChangeOfLastName}/>
                             </FormControl>
                             <br/><br/>
                             <FormControl>
                                 <InputLabel htmlFor="email">Email</InputLabel>
                                 <Input id="email" type="email" email={this.state.email} onChange={this.onChangeOfEmail}/>
-                                <FormHelperText className={this.state.emailRequired}><span className="red">required</span></FormHelperText>
+                                <FormHelperText className={this.state.emailRequired}>
+                                    <span className="red">required</span>
+                                </FormHelperText>
+                                <FormHelperText className={this.state.emailInvalid}>
+                                    <span className="red">Invalid Email</span>
+                                </FormHelperText>
                             </FormControl>
                             <br/><br/>
                             <FormControl>
                                 <InputLabel htmlFor="password">Password</InputLabel>
-                                <Input id="password" type="password" password={this.state.password} onChange={this.onPasswordChange}/>
-                                <FormHelperText className={this.state.passwordRequired}><span className="red">required</span></FormHelperText>
+                                <Input id="password" type="password" password={this.state.signUpPassword} onChange={this.onSignUpPasswordChange}/>
+                                <FormHelperText className={this.state.signUpPasswordRequired}><span className="red">required</span></FormHelperText>
+                                <FormHelperText className={this.state.signUpPasswordInvalid}><span className="red">Password must contain at least one capital letter, one small letter, one number, and one special character</span></FormHelperText>
                             </FormControl>
                             <br/><br/>
                             <FormControl>
                                 <InputLabel htmlFor="contactno">Contact No.</InputLabel>
-                                <Input id="contactno" type="text" contactno={this.state.contactno} onChange={this.onContactNumberChange}/>
-                                <FormHelperText className={this.state.contactnoRequired}><span className="red">required</span></FormHelperText>
+                                <Input id="contactno" type="text" contactno={this.state.signUpContactno} onChange={this.onSignUpContactNumberChange}/>
+                                <FormHelperText className={this.state.signUpcontactnoRequired}><span className="red">required</span></FormHelperText>
+                                <FormHelperText className={this.state.signUpcontactInvalid}><span className="red">Contact No. must contain only numbers and must be 10 digits long</span></FormHelperText>
                             </FormControl>
                             <br/><br/>
                             <Button variant="contained" color="primary" onClick={this.onSignUpClick}>SIGNUP</Button>
