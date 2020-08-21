@@ -31,3 +31,39 @@
     display: flex;
     justify-content: space-between;
 }
+
+.item-section {
+    padding: 25px 50px;
+    width: 40%;
+}
+
+.mcard-category {
+    font-weight: bold !important;
+}
+
+.mcard-main {
+    padding: 10px 0;
+}
+
+.item-veg {
+    color: #5a9a5a;
+}
+
+.item-nonveg {
+    color: #be4a47;
+}
+
+.item-name {
+    text-transform: capitalize;
+}
+
+.item-add {
+    font-size: small !important;
+    padding: 0 !important;
+}
+
+.item-menu {
+    display: flex;
+    padding: 10px 0;
+    justify-content: right;
+}

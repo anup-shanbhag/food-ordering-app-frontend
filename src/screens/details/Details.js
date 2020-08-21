@@ -2,38 +2,43 @@ import React, {Component} from "react";
 import Header from "../../common/header/Header";
 import Typography from "@material-ui/core/Typography";
 import './Details.css';
-import DetailsRCard from "../../common/utils/DetailsRCard";
+import DetailsRCard from "../../common/details/DetailsRCard";
+import DetailsMenuCard from "../../common/details/DetailsMenuCard";
 
 class Details extends Component {
     constructor() {
         super();
         this.state = {
-            restaurant: {},
-            address: {},
-            categories: [],
+            restaurant: null,
         }
     }
 
     componentDidMount() {
         this.getRestaurant();
-        this.mounted = true;
     }
 
     render() {
         return (
             <div>
-                {this.mounted === true ?
+                {this.state.loading === true ?
+                    <Typography className="loading-spinner" variant="h4"
+                                color="textSecondary">loading...</Typography>
+                    : ""
+                }
+                {this.state.restaurant !== null ?
                     <div>
-
-                        {console.log(JSON.stringify(this.state.restaurant))}
                         <Header searchHandler={this.searchHandler}/>
-                        {this.state.loading === true ?
-                            <Typography className="loading-spinner" variant="h4"
-                                        color="textSecondary">loading...</Typography>
-                            : ""
-                        }
-                        <DetailsRCard restaurant={this.state.restaurant} address={this.state.address}
-                                      categories={this.state.categories}/>
+                        <div className="restaurant-section">
+                            <DetailsRCard restaurant={this.state.restaurant}/>
+                        </div>
+                        <div className="item-section">
+                            {this.state.restaurant.categories.map((category, index) => (
+                                <span key={category.id + "category"}>
+                                        <DetailsMenuCard category={category}/>
+                                    </span>
+                            ))
+                            }
+                        </div>
                     </div>
                     : ""}
             </div>
@@ -54,7 +59,7 @@ class Details extends Component {
                 restaurant: jsonResponse,
                 address: jsonResponse.address,
                 categories: jsonResponse.categories,
-                loading: false
+                loading: false,
             })
         }).catch((error) => {
             console.log('error user data', error);

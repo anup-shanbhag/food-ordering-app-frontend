@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import HomeRCard from "../../common/utils/HomeRCard";
+import HomeRCard from "../../common/home/HomeRCard";
 import './Home.css'
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";

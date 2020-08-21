@@ -1,6 +1,7 @@
 import React from "react";
 import Typography from "@material-ui/core/Typography";
 
+// Component for details restaurant section
 export default function DetailsRCard(props) {
     return (
         <div className="rcard-main">
@@ -9,37 +10,37 @@ export default function DetailsRCard(props) {
             </div>
             <div className="rcard-right">
                 <Typography variant="h4" className="rcard-name">{props.restaurant.restaurant_name}</Typography>
-                <Typography variant="h6" className="rcard-locality upper-case">{props.address.locality}</Typography>
+                <Typography variant="h6" className="rcard-locality upper-case">{props.restaurant.address.locality}</Typography>
                 <br/>
                 <Typography variant="body1">
                     {
-                        props.categories.map((category, index) =>
+                        props.restaurant.categories.map((category, index) =>
                             (
                                 <span key={category.id + "category"}> {category.category_name}
-                                    {index < props.categories.length - 1 ? ',' : ''}
+                                    {index < props.restaurant.categories.length - 1 ? ',' : ''}
                                     </span>
                             ))
                     }
                 </Typography>
                 <br/>
                 <div className="rcard-right-bottom">
-                    <box>
+                    <div>
                         <Typography variant="body1" color="textPrimary">
                             <i className="fa fa-star" aria-hidden="true"/> {props.restaurant.customer_rating}
                         </Typography>
                         <Typography variant="body1" color="textSecondary" className="upper-case">
                             Average Rating By <br/> {props.restaurant.number_customers_rated} customers
                         </Typography>
-                    </box>
-                    <box>
+                    </div>
+                    <div>
                         <Typography variant="body1" color="textPrimary">
                             <i className="fa fa-inr" aria-hidden="true"/> {props.restaurant.average_price}
                         </Typography>
                         <Typography variant="body1" color="textSecondary" className="upper-case">
                             Average Cost For <br/> Two People
                         </Typography>
-                    </box>
-                    <box></box>
+                    </div>
+                    <div></div>
                 </div>
             </div>
         </div>
