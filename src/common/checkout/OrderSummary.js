@@ -8,7 +8,7 @@ export default function OrderSummary(props){
     const onClickPlaceOrder = () => {};
 
     return(
-        <Card className="login-card" >
+        <Card className="order-summary-card" >
             <CardContent>
                 <Box display="flex" flexDirection="column">
                     <FormControl fullWidth margin="normal" size="small" variant="standard">

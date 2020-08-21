@@ -3,9 +3,10 @@ import '../../common/checkout/Addresses'
 import {Box, Stepper, Step, StepLabel, StepContent, Button, Tabs, Typography, AppBar, Tab} from "@material-ui/core";
 import Addresses from "../../common/checkout/Addresses";
 import Payment from "../../common/checkout/Payment";
-import {addresses, paymentMethods, states} from "../../common/checkout/Test";
+import {addresses, paymentMethods, states, order} from "../../common/checkout/Test";
 import AddressForm from "../../common/checkout/AddressForm";
 import OrderSummary from "../../common/checkout/OrderSummary";
+import Header from "../../common/header/Header";
 
 export default class Checkout extends Component {
     constructor(props) {
@@ -45,37 +46,42 @@ export default class Checkout extends Component {
 
     render() {
         return (
-            <Box display="flex" flexDirection="row" width="96%%" padding="1%" margin="1%">
-                <Box display="block" width="70%" padding="1%" marginLeft="0.1%" marginRight="auto" marginTop="0.1%">
-                    <Stepper activeStep={this.state.activeStep} orientation="vertical">
-                        {this.getSteps().map((label, index) => (
-                            <Step key={label}>
-                                <StepLabel>{label}</StepLabel>
-                                <StepContent>
-                                    {this.getStepContent(index)}
-                                    <Box>
-                                        <Button disabled={this.state.activeStep === 0}
-                                                onClick={this.handleBack}>Back</Button>
-                                        <Button variant="contained" color="primary" onClick={this.handleNext}>
-                                            {this.state.activeStep === this.getSteps().length - 1 ? 'Finish' : 'Next'}
-                                        </Button>
-                                    </Box>
-                                </StepContent>
-                            </Step>
-                        ))}
-                    </Stepper>
-                    {(this.state.activeStep === this.getSteps().length) ? (
-                        <Box><Typography variant="body1">View the summary and place your order now!</Typography>
-                            <Button onClick={this.handleReset}>
-                                CHANGE
-                            </Button>
-                        </Box>) : ""
-                    }
-                </Box>
-                <Box display="block" width="27%" padding="1%" marginRight="0.1%" marginLeft="auto%" marginTop="2%">
-                    <OrderSummary/>
+            <Box>
+                <Header />
+                <Box display="flex" flexDirection="row" width="100%" mt="1%">
+                    <Box width="73%" >
+                        <Stepper activeStep={this.state.activeStep} orientation="vertical">
+                            {this.getSteps().map((label, index) => (
+                                <Step key={label}>
+                                    <StepLabel>{label}</StepLabel>
+                                    <StepContent>
+                                        {this.getStepContent(index)}
+                                        <Typography variant="h2" gutterBottom/>
+                                        <Box>
+                                            <Button disabled={this.state.activeStep === 0}
+                                                    onClick={this.handleBack}>Back</Button>
+                                            <Button variant="contained" color="primary" onClick={this.handleNext}>
+                                                {this.state.activeStep === this.getSteps().length - 1 ? 'Finish' : 'Next'}
+                                            </Button>
+                                        </Box>
+                                    </StepContent>
+                                </Step>
+                            ))}
+                        </Stepper>
+                        {(this.state.activeStep === this.getSteps().length) ? (
+                            <Box><Typography variant="body1">View the summary and place your order now!</Typography>
+                                <Button onClick={this.handleReset}>
+                                    CHANGE
+                                </Button>
+                            </Box>) : ""
+                        }
+                    </Box>
+                    <Box width="27%" padding="1%" >
+                        <OrderSummary order={order}/>
+                    </Box>
                 </Box>
             </Box>
+
         );
     }
 }

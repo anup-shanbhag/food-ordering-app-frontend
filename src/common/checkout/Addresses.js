@@ -22,10 +22,6 @@ const useStyles = makeStyles({
         fill: 'gray',
         pointerEvents: "none"
     },
-    select: {
-        marginLeft: "auto",
-        marginRight: "1%"
-    },
     gridList: {
         flexWrap: 'nowrap',
         margin: "0%",
@@ -34,34 +30,49 @@ const useStyles = makeStyles({
         transform: 'translateZ(0)',
     },
     gridTile: {
-        height: '150px'
+        height: 'auto'
     },
     addressCard: {
         padding: "1%",
-        margin: "1%"
+        margin: "3%"
+    },
+    cardContent: {
+        paddingTop: "2%",
+        paddingLeft: "4%",
+        paddingRight: "4%",
+        paddingBottom: "1%",
+    },
+    cardActions: {
+        paddingTop: "1%",
+        paddingLeft: "4%",
+        paddingRight: "4%",
+        paddingBottom: "2%",
     }
 });
 
 export default function Addresses(props) {
-    const [selected, setSelected] = React.useState([(props.addresses !== null && props.addresses.length > 0) ? new Array(props.addresses.length).fill(false)
-        : []]);
+    const [selected, setSelected] = React.useState(
+        (props.addresses !== null && props.addresses.length > 0) ?
+            [true, ...new Array(props.addresses.length - 1).fill(false)] : []
+    );
     const classes = useStyles();
     const getClass = (active) => (active) ? classes.active : classes.inactive;
     const onClick = (e) => {
         let newArr = [...selected].fill(false);
-        if(e.target.value !== null){
-            newArr[e.target.value]=true;
+        if (e.target.value !== null) {
+            newArr[e.target.value] = true;
             setSelected(newArr);
         }
     }
     return (
-        <GridList className={classes.gridList} cols={3} cellHeight="auto" >
+        <GridList className={classes.gridList} cols={3} cellHeight="auto">
             {
                 (props.addresses !== null && props.addresses.length > 0) ?
-                    props.addresses.map((address,index) => (
+                    props.addresses.map((address, index) => (
                         <GridListTile className={classes.gridTile} key={address.id}>
-                            <Card className={"customer-address " + classes.addressCard} raised={selected[index]===true} >
-                                <CardContent>
+                            <Card className={"customer-address " + classes.addressCard}
+                                  raised={selected[index] === true}>
+                                <CardContent className={classes.cardContent}>
                                     <Box display="flex" flexDirection="column" alignItems="flex-start">
                                         <Typography className="address-line"
                                                     variant="subtitle2">{address.flat_building_name}</Typography>
@@ -71,14 +82,17 @@ export default function Addresses(props) {
                                                     variant="subtitle2">{address.city}</Typography>
                                         <Typography className="address-line"
                                                     variant="subtitle2">{address.state.state_name}</Typography>
-                                        <Typography className="address-line" variant="subtitle2"
-                                                    gutterBottom>{address.pincode}</Typography>
+                                        <Typography className="address-line"
+                                                    variant="subtitle2">{address.pincode}</Typography>
                                     </Box>
                                 </CardContent>
-                                <CardActions>
-                                        <IconButton className={classes.select} id={address.id} value={index} onClick={onClick}>
-                                            <CheckCircleRounded className={getClass(selected[index])} />
+                                <CardActions disableSpacing className={classes.cardActions}>
+                                    <Box width="100%" display="inline" textAlign="right">
+                                        <IconButton size="medium" id={address.id} value={index}
+                                                    onClick={onClick}>
+                                            <CheckCircleRounded fontSize="large" className={getClass(selected[index])}/>
                                         </IconButton>
+                                    </Box>
                                 </CardActions>
                             </Card>
                         </GridListTile>

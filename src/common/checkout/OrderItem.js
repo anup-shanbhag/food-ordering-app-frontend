@@ -1,6 +1,6 @@
 import React from 'react';
 import {Box, Typography, IconButton} from '@material-ui/core';
-import {Add, CheckCircleRounded, Remove} from '@material-ui/icons';
+import {Add, Remove} from '@material-ui/icons';
 import {makeStyles} from "@material-ui/core/styles";
 
 import "font-awesome/css/font-awesome.css"
