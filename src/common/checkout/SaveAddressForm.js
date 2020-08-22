@@ -75,7 +75,7 @@ export default function SaveAddressForm(props) {
                 <InputLabel htmlFor="state">State</InputLabel>
                 <NativeSelect id="state" value={state} onChange={onStateChanged}>
                     <option value=""/>
-                    {props.states.map(state => (
+                    {props.states && props.states.map(state => (
                         <option key={state.id} value={state.id}>{state.state_name}</option>
                     ))}
                 </NativeSelect>
