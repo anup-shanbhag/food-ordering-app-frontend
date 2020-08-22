@@ -1,12 +1,23 @@
 import React from 'react';
-import {Card, CardContent, Button, Typography, FormControl, CardActions, Divider, Box} from '@material-ui/core';
+
+import {
+    Card,
+    CardContent,
+    Button,
+    Typography,
+    FormControl,
+    CardActions,
+    Divider,
+    Box
+} from '@material-ui/core';
+
 import OrderItem from "../order/OrderItem";
 import "font-awesome/css/font-awesome.css"
 
-export default function OrderSummaryCard(props){
+export default function OrderSummaryCard(props) {
 
-    return(
-        <Card className="order-summary-card" >
+    return (
+        <Card className="order-summary-card">
             <CardContent>
                 <Box display="flex" flexDirection="column">
                     <FormControl fullWidth margin="normal" size="small" variant="standard">
@@ -22,29 +33,31 @@ export default function OrderSummaryCard(props){
                     <FormControl fullWidth margin="dense" size="small" variant="standard">
                         {
                             (props.order.item_quantities.length > 0) &&
-                                props.order.item_quantities.map(item => (
-                                    <OrderItem key={item.item.id}
-                                               nonVeg={item.item.type === "NON_VEG"}
-                                               name={item.item.item_name} quantity={item.quantity}
-                                               price={item.price}/>
-                                ))
+                            props.order.item_quantities.map(item => (
+                                <OrderItem key={item.item.id}
+                                           nonVeg={item.item.type === "NON_VEG"}
+                                           name={item.item.item_name} quantity={item.quantity}
+                                           price={item.price}/>
+                            ))
                         }
                         <Typography variant="h3" gutterBottom/>
                     </FormControl>
-                    <Divider variant="fullWidth" />
+                    <Divider variant="fullWidth"/>
                     <FormControl fullWidth margin="normal" size="small" variant="standard">
                         <Box display="flex" flexDirection="row" justifyContent="space-between">
-                                <Typography className="net-amount" variant="body2" color="textPrimary">
-                                    Net Amount
-                                </Typography>
-                                <Typography variant="body2"><i className="fa fa-inr"/> {Number(props.order.bill).toFixed(2)}</Typography>
+                            <Typography className="net-amount" variant="body2" color="textPrimary">
+                                Net Amount
+                            </Typography>
+                            <Typography variant="body2"><i className="fa fa-inr"/> {Number(props.order.bill).toFixed(2)}
+                            </Typography>
                         </Box>
                     </FormControl>
                 </Box>
             </CardContent>
             <CardActions>
                 <FormControl fullWidth margin="normal" size="small" variant="standard">
-                    <Button variant="contained" color="primary" id="btn-place" onClick={props.handlePlaceOrder}>PLACE ORDER</Button>
+                    <Button variant="contained" color="primary" id="btn-place" onClick={props.handlePlaceOrder}>PLACE
+                        ORDER</Button>
                 </FormControl>
             </CardActions>
         </Card>
