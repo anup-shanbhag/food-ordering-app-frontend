@@ -10,7 +10,7 @@ const CallApi = async (endpoint, headers, ...callbacks) => {
 const GetEndpointURI = (name, param, value) => {
     let uri = Config.endpointPrefix + Config.endpoints.find(endpoint => endpoint.name === name).uri;
     if (param && value) {
-        return "ERROR";
+        return uri.replace(param, value);
     } else {
         return uri;
     }
