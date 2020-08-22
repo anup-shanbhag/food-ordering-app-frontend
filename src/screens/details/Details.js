@@ -11,8 +11,15 @@ class Details extends Component {
         super();
         this.state = {
             restaurant: null,
+            cartItem: {id:null, name:null, type:null, quantity:0, price:0},
+            cartItems: [],
+            totalAmount: 0,
+            totalItems: 0,
         }
+        this.handleAddItem = this.handleAddItem.bind(this);
     }
+
+    handleAddItem = (item) => this.addToCartHandler(item);
 
     componentDidMount() {
         this.getRestaurant();
@@ -28,21 +35,31 @@ class Details extends Component {
                 }
                 {this.state.restaurant !== null ?
                     <div>
+                        {/*Header section*/}
                         <Header searchHandler={this.searchHandler}/>
+
+                        {/*Restaurant Details section*/}
                         <div className="restaurant-section">
                             <DetailsRCard restaurant={this.state.restaurant}/>
                         </div>
+
                         <div className="section2">
+
+                            {/*Restaurant Menu section*/}
                             <div className="item-section">
                                 {this.state.restaurant.categories.map((category, index) => (
                                     <span key={category.id + "category"}>
-                                            <DetailsMenuCard category={category}/>
-                                        </span>
+                                        <DetailsMenuCard category={category} handleAddItem={this.handleAddItem}/>
+                                    </span>
                                 ))
                                 }
                             </div>
+
+                            {/*Checkout Cart section*/}
                             <div className="cart-section">
-                                <DetailsCartCard/>
+                                <DetailsCartCard cartItems={this.state.cartItems}
+                                                 totalAmount={this.state.totalAmount}
+                                                 totalItems={this.state.totalItems}/>
                             </div>
                         </div>
                     </div>
@@ -70,6 +87,36 @@ class Details extends Component {
         }).catch((error) => {
             console.log('error user data', error);
         });
+    }
+
+    addToCartHandler = (item) => {
+        let totalAmount = this.state.totalAmount;
+        let totalItems = this.state.totalItems;
+        totalAmount += item.price;
+        totalItems += 1;
+
+        let newItem =this.state.cartItem;
+        newItem.id = item.id;
+        newItem.name = item.item_name;
+        newItem.type = item.item_type;
+        newItem.quantity = 1;
+        newItem.price = item.price * newItem.quantity;
+
+        if(this.state.cartItems.length !== 0 && this.state.cartItems.some(cItem => (cItem.id === item.id))){
+            var index = this.state.cartItems.findIndex(cItem => cItem.name === item.item_name);
+
+            var updateItem = this.state.cartItems[index];
+            updateItem.quantity = this.state.cartItems[index].quantity + 1;
+            updateItem.price = this.state.cartItems[index].price + item.price;
+
+            this.setState({totalItems: totalItems});
+        }
+        else {
+            this.setState({cartItem: newItem})
+            this.setState({cartItem: {}});
+            this.state.cartItems.push(this.state.cartItem);
+        }
+        this.setState({totalAmount: totalAmount})
     }
 }
 

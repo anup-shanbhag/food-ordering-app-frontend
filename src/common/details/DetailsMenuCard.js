@@ -7,10 +7,10 @@ import Grid from "@material-ui/core/Grid";
 
 // Component for details restaurant menu section
 export default function DetailsMenuCard(props) {
-    return(
-
+    return (
         <div className="mcard-main">
-            <Typography variant="button" color="textSecondary" className="mcard-category"> {props.category.category_name} </Typography>
+            <Typography variant="button" color="textSecondary"
+                        className="mcard-category"> {props.category.category_name} </Typography>
             <Divider/>
             {props.category.item_list.map((item) => (
                 <span key={item.id + "item"} className="item-menu">
@@ -27,11 +27,15 @@ export default function DetailsMenuCard(props) {
                     </Grid>
                     <Grid item xs={1} lg={1}/>
                     <Grid item xs={2} lg={1}>
-                        <Typography variant="body1"> <i className="fa fa-inr" aria-hidden="true"/> {item.price} </Typography>
+                        <Typography variant="body1"> <i className="fa fa-inr"
+                                                        aria-hidden="true"/> {item.price} </Typography>
                     </Grid>
                     <Grid item xs={1} lg={1}/>
                     <Grid item xs={1} lg={1}>
-                        <IconButton className="item-add"> <AddIcon/> </IconButton>
+                        <IconButton className="item-add" value={item}
+                                    onClick={props.handleAddItem.bind(this, item)}>
+                            <AddIcon/>
+                        </IconButton>
                     </Grid>
                 </span>
             ))

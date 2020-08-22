@@ -10,27 +10,27 @@ export default function DetailsCartItem(props) {
         <div className="cart-item-main">
             <Grid item xs={1} lg={1}>
                 <Typography>
-                    {/*{item.item_type === "VEG" ?*/}
+                    {props.cartItem.type === "VEG" ?
                     <i className="fa fa-stop-circle-o item-veg" aria-hidden="true"/>
-                        {/*: <i className="fa fa-circle item-nonveg" aria-hidden="true"/>
-                    }*/}
+                        : <i className="fa fa-stop-circle-o item-nonveg" aria-hidden="true"/>
+                    }
                 </Typography>
             </Grid>
             <Grid item xs={5} lg={5}>
-                <Typography variant="body1" className="item-name"> Rolls </Typography>
+                <Typography variant="body1" className="item-name"> {props.cartItem.name} </Typography>
             </Grid>
             <Grid item xs={1} lg={1} className="citem-remove">
                 <IconButton> <RemoveIcon/> </IconButton>
             </Grid>
             <Grid item xs={1} lg={1} className="citem-quantity">
-                <Typography>2</Typography>
+                <Typography> {props.cartItem.quantity} </Typography>
             </Grid>
             <Grid item xs={1} lg={1} className="citem-add">
                 <IconButton> <AddIcon/> </IconButton>
             </Grid>
-            <Grid item xs={1} lg={2}/>
-            <Grid item xs={2} lg={1}>
-                <Typography variant="body1"> <i className="fa fa-inr" aria-hidden="true"/> 200 </Typography>
+            <Grid item xs={1} lg={1}/>
+            <Grid item xs={2} lg={2}>
+                <Typography variant="body1"> <i className="fa fa-inr" aria-hidden="true"/> {props.cartItem.price} </Typography>
             </Grid>
         </div>
     )
