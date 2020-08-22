@@ -1,5 +1,5 @@
 import React from "react";
-import {Box, FormControl, FormHelperText, Input, InputLabel, NativeSelect, Button} from '@material-ui/core';
+import {Box, FormControl, FormHelperText, Input, InputLabel, NativeSelect, Button, Typography} from '@material-ui/core';
 import {makeStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
@@ -10,7 +10,7 @@ const useStyles = makeStyles({
         display: 'none'
     }
 });
-export default function AddressForm(props) {
+export default function SaveAddressForm(props) {
     const [flatname, setFlatname] = React.useState("");
     const [locality, setLocality] = React.useState("");
     const [city, setCity] = React.useState("");
@@ -18,7 +18,6 @@ export default function AddressForm(props) {
     const [pincode, setPincode] = React.useState("");
     const [isSaveClicked, setSaveClicked] = React.useState(false);
     const classes = useStyles();
-    const getClass = () => (props.active) ? classes.active : classes.inactive;
     const onFlatnameChanged = (e) => setFlatname(e.target.value);
     const onLocalityChanged = (e) => setLocality(e.target.value);
     const onCityChanged = (e) => setCity(e.target.value);
@@ -34,23 +33,23 @@ export default function AddressForm(props) {
         console.log(pincode);
     };
     return (
-        <Box display="flex" flexDirection="column" padding="2%" margin="2%">
-            <FormControl required margin="dense" size="small" variant="standard">
+        <Box width="60%" display="flex" flexDirection="column" padding="2%" margin="0%">
+            <FormControl required margin="normal" size="small" variant="standard">
                 <InputLabel htmlFor="flatname">Flat / Building No</InputLabel>
                 <Input id="flatname" type="text" value={flatname} onChange={onFlatnameChanged}/>
                 <FormHelperText error className={display(flatname)}>required</FormHelperText>
             </FormControl>
-            <FormControl required margin="dense" size="small" variant="standard">
+            <FormControl required margin="normal" size="small" variant="standard">
                 <InputLabel htmlFor="locality">Locality</InputLabel>
                 <Input id="locality" type="text" value={locality} onChange={onLocalityChanged}/>
                 <FormHelperText error className={display(locality)}>required</FormHelperText>
             </FormControl>
-            <FormControl required margin="dense" size="small" variant="standard">
+            <FormControl required margin="normal" size="small" variant="standard">
                 <InputLabel htmlFor="city">City</InputLabel>
                 <Input id="city" type="text" value={city} onChange={onCityChanged}/>
                 <FormHelperText error className={display(city)}>required</FormHelperText>
             </FormControl>
-            <FormControl required margin="dense" size="small" variant="standard">
+            <FormControl required margin="normal" size="small" variant="standard">
                 <InputLabel htmlFor="state">State</InputLabel>
                 <NativeSelect id="state" value={state} onChange={onStateChanged}>
                     <option value=""/>
@@ -60,12 +59,13 @@ export default function AddressForm(props) {
                 </NativeSelect>
                 <FormHelperText error className={display(state)}>required</FormHelperText>
             </FormControl>
-            <FormControl required margin="dense" size="small" variant="standard">
+            <FormControl required margin="normal" size="small" variant="standard">
                 <InputLabel htmlFor="pincode">Pincode</InputLabel>
                 <Input id="pincode" type="text" value={pincode} onChange={onPincodeChanged}/>
                 <FormHelperText error className={display(pincode)}>required</FormHelperText>
             </FormControl>
-            <FormControl margin="dense" size="small" variant="standard">
+            <FormControl margin="normal" size="small" variant="standard">
+                <Typography variant="h2" gutterBottom/>
                 <Button variant="contained" color="secondary" id="btn-save" onClick={onSave}>SAVE ADDRESS</Button>
             </FormControl>
         </Box>
