@@ -26,7 +26,6 @@ import Notification from "../../common/notification/Notification";
 import Header from "../../common/header/Header";
 import "./Checkout.css";
 
-import {order} from "../../common/checkout/Test";
 import {GetEndpointURI, GetHttpHeaders, CallApi} from "../../common/utils/ApiHelper";
 
 const useStyles = (theme) => ({
@@ -75,6 +74,38 @@ class Checkout extends React.Component {
             notificationOpen: false,
             selectedAddressId: null,
             selectedPaymentMethodId: null,
+            order: {
+                "address_id": null,
+                "bill": 620.0,
+                "coupon_id": null,
+                "discount": 0,
+                "item_quantities": [
+                    {
+                        "item_id": "8c174b25-bb31-56a8-88b4-d06ffc9d5f89",
+                        "item_name": "Tea",
+                        "type": "VEG",
+                        "quantity": 2,
+                        "price": 40
+                    },
+                    {
+                        "item_id": "1dd86f90-a296-11e8-9a3a-720006ceb890",
+                        "item_name": "Paneer Chilly",
+                        "type": "VEG",
+                        "quantity": 2,
+                        "price": 280
+                    },
+                    {
+                        "item_id": "2ddf5546-ecd0-11e8-8eb2-f2801f1b9fd1",
+                        "item_name": "Chicken Roll",
+                        "type": "NON_VEG",
+                        "quantity": 2,
+                        "price": 300
+                    }
+                ],
+                "payment_id": null,
+                "restaurant_id": "2461973c-a238-11e8-9077-720006ceb890",
+                "restaurant_name": "Lion Heart"
+            }
         }
         this.handlePlaceOrder = this.handlePlaceOrder.bind(this);
         this.closeNotification = this.closeNotification.bind(this);
@@ -83,6 +114,8 @@ class Checkout extends React.Component {
         this.setAvailablePaymentMethods = this.setAvailablePaymentMethods.bind(this);
         this.setAvailableStates = this.setAvailableStates.bind(this);
         this.setAvailableAddresses = this.setAvailableAddresses.bind(this);
+        this.msgSaveOrderNotOK = "Unable to place your order! Please try again!";
+        this.msgSaveOrderOK = "Order placed successfully! Your order ID is $orderId.";
     }
 
     getSteps = () => ['Delivery', 'Payment'];
@@ -208,7 +241,7 @@ class Checkout extends React.Component {
                     <Box
                         className={(this.props.isSmallScreen) ? classes.summaryCardContainerSm : classes.summaryCardContainer}
                         padding="1%">
-                        <OrderSummaryCard order={order} handlePlaceOrder={this.handlePlaceOrder}/>
+                        <OrderSummaryCard order={this.state.order} handlePlaceOrder={this.handlePlaceOrder}/>
                     </Box>
                 </Box>
                 <Notification messageText={this.state.messageText} open={this.state.notificationOpen}

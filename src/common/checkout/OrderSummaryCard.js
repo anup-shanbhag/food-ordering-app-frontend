@@ -34,9 +34,10 @@ export default function OrderSummaryCard(props) {
                         {
                             (props.order.item_quantities.length > 0) &&
                             props.order.item_quantities.map(item => (
-                                <OrderItem key={item.item.id}
-                                           nonVeg={item.item.type === "NON_VEG"}
-                                           name={item.item.item_name} quantity={item.quantity}
+                                <OrderItem key={item.item_id}
+                                           nonVeg={item.type === "NON_VEG"}
+                                           name={item.item_name}
+                                           quantity={item.quantity}
                                            price={item.price}/>
                             ))
                         }
