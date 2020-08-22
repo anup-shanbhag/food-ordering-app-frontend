@@ -22,7 +22,7 @@ export default function DetailsMenuCard(props) {
                             }
                         </Typography>
                     </Grid>
-                    <Grid item xs={5} lg={7}>
+                    <Grid item xs={6} lg={7}>
                         <Typography variant="body1" className="item-name"> {item.item_name} </Typography>
                     </Grid>
                     <Grid item xs={1} lg={1}/>
