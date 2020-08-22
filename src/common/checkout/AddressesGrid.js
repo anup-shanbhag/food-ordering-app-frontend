@@ -78,44 +78,51 @@ export default function AddressesGrid(props) {
         }
     }
     return (
-        <GridList className={classes.gridList} cols={props.cols} cellHeight="auto">
+        <Box width={1} textAlign="left">
             {
-                (props.addresses !== null && props.addresses.length > 0) ?
-                    props.addresses.map((address, index) => (
-                        <GridListTile className={classes.gridTile} key={address.id}>
-                            <Card className={"customer-address " + classes.addressCard + " " +
-                            (selected[index] && classes.selected)} raised={selected[index] === true}>
-                                <CardContent className={classes.cardContent}>
-                                    <Box display="flex" flexDirection="column" alignItems="flex-start">
-                                        <Typography className="address-line"
-                                                    variant="subtitle2">{address.flat_building_name}</Typography>
-                                        <Typography className="address-line"
-                                                    variant="subtitle2">{address.locality}</Typography>
-                                        <Typography className="address-line"
-                                                    variant="subtitle2">{address.city}</Typography>
-                                        <Typography className="address-line"
-                                                    variant="subtitle2">{address.state.state_name}</Typography>
-                                        <Typography className="address-line"
-                                                    variant="subtitle2">{address.pincode}</Typography>
-                                    </Box>
-                                </CardContent>
-                                <CardActions disableSpacing className={classes.cardActions}>
-                                    <Box width="100%" display="inline" textAlign="right">
-                                        <IconButton size="medium" id={address.id} value={index}
-                                                    onClick={onClick}>
-                                            <CheckCircleRounded fontSize="large" className={getClass(selected[index])}/>
-                                        </IconButton>
-                                    </Box>
-                                </CardActions>
-                            </Card>
-                        </GridListTile>
-                    )) :
-                    <Typography className="payment-method" variant="subtitle2">There are no saved addresses! You can
-                        save
-                        an address using the 'New Address' tab or using your ‘Profile’ menu option.</Typography>
-
+                (props.addresses !== null && props.addresses.length > 0) ? (
+                    <GridList className={classes.gridList} cols={props.cols} cellHeight="auto">
+                        {
+                            props.addresses.map((address, index) => (
+                                <GridListTile className={classes.gridTile} key={address.id}>
+                                    <Card className={"customer-address " + classes.addressCard + " " +
+                                    (selected[index] && classes.selected)} raised={selected[index] === true}>
+                                        <CardContent className={classes.cardContent}>
+                                            <Box display="flex" flexDirection="column" alignItems="flex-start">
+                                                <Typography className="address-line"
+                                                            variant="subtitle2">{address.flat_building_name}</Typography>
+                                                <Typography className="address-line"
+                                                            variant="subtitle2">{address.locality}</Typography>
+                                                <Typography className="address-line"
+                                                            variant="subtitle2">{address.city}</Typography>
+                                                <Typography className="address-line"
+                                                            variant="subtitle2">{address.state.state_name}</Typography>
+                                                <Typography className="address-line"
+                                                            variant="subtitle2">{address.pincode}</Typography>
+                                            </Box>
+                                        </CardContent>
+                                        <CardActions disableSpacing className={classes.cardActions}>
+                                            <Box width="100%" display="inline" textAlign="right">
+                                                <IconButton size="medium" id={address.id} value={index}
+                                                            onClick={onClick}>
+                                                    <CheckCircleRounded fontSize="large"
+                                                                        className={getClass(selected[index])}/>
+                                                </IconButton>
+                                            </Box>
+                                        </CardActions>
+                                    </Card>
+                                </GridListTile>
+                            ))
+                        }
+                    </GridList>) : (
+                    <Box padding="2%">
+                        <Typography variant="h3" gutterBottom/>
+                        <Typography className="payment-method" variant="body1" color="textSecondary">
+                            {"There are no saved addresses! You can save an address using the 'New Address' tab or using your ‘Profile’ menu option."}
+                        </Typography>
+                    </Box>
+                )
             }
-            }
-        </GridList>
+        </Box>
     );
 }
