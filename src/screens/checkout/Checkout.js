@@ -119,12 +119,26 @@ class Checkout extends React.Component {
         this.msgSaveOrderOK = "Order placed successfully! Your order ID is $orderId.";
         this.msgSaveAddressNotOK = "Unable to save address! Please try again!";
         this.msgSaveAddressOK = "Address saved successfully!";
+        this.msgAddressNotSelected = "Please select an address for delivery!";
+        this.msgPaymentNotSelected = "Please select a payment method!";
     }
 
     getSteps = () => ['Delivery', 'Payment'];
     handleNext = () => {
-        if ((this.state.activeStep === 0 && this.state.selectedAddressId) ||
-            (this.state.activeStep === 1 && this.state.selectedPaymentMethodId)) {
+        if(this.state.activeStep === 0 && !this.state.selectedAddressId){
+            console.log(this.state.selectedAddressId);
+            this.setState({
+                messageText: this.msgAddressNotSelected,
+                notificationOpen: true
+            });
+        }
+        else if(this.state.activeStep === 1 && !this.state.selectedPaymentMethodId){
+            this.setState({
+                messageText: this.msgPaymentNotSelected,
+                notificationOpen: true
+            });
+        }
+        else {
             this.setState({activeStep: this.state.activeStep + 1});
         }
     }
@@ -144,6 +158,7 @@ class Checkout extends React.Component {
             this.setState({addresses: null});
         }
     }
+
     getAvailableAddresses = () => CallApi(GetEndpointURI('Get Addresses'),
         GetHttpHeaders('GET', "Bearer " + window.sessionStorage.getItem("access-token")),
         this.setAvailableAddresses);

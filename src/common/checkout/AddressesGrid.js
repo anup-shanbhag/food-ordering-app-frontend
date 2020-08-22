@@ -74,7 +74,7 @@ export default function AddressesGrid(props) {
         if (e.currentTarget.value !== null) {
             newArr[e.currentTarget.value] = true;
             setSelected(newArr);
-            props.setAddressId(e.target.id);
+            props.setAddressId(e.currentTarget.id);
         }
     }
     return (
