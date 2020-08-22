@@ -1,10 +1,19 @@
 import React from 'react';
-import {Card, CardContent, Box, Typography, GridListTile, GridList, CardActions, IconButton} from '@material-ui/core';
+import {
+    Card,
+    CardContent,
+    Box,
+    Typography,
+    GridListTile,
+    GridList,
+    CardActions,
+    IconButton,
+} from '@material-ui/core';
 import {CheckCircleRounded} from "@material-ui/icons";
 import {makeStyles} from '@material-ui/core/styles';
 
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
     active: {
         fill: 'green',
         pointerEvents: "none"
@@ -21,7 +30,7 @@ const useStyles = makeStyles({
         transform: 'translateZ(0)',
     },
     gridTile: {
-        height: 'auto'
+        height: 'auto',
     },
     addressCard: {
         padding: "1%",
@@ -39,7 +48,7 @@ const useStyles = makeStyles({
         paddingRight: "4%",
         paddingBottom: "2%",
     }
-});
+}));
 
 export default function AddressesGrid(props) {
     const [selected, setSelected] = React.useState(
@@ -56,7 +65,7 @@ export default function AddressesGrid(props) {
         }
     }
     return (
-        <GridList className={classes.gridList} cols={3} cellHeight="auto">
+        <GridList className={classes.gridList} cols={props.cols} cellHeight="auto">
             {
                 (props.addresses !== null && props.addresses.length > 0) ?
                     props.addresses.map((address, index) => (
