@@ -276,7 +276,7 @@ class Checkout extends React.Component {
                             ))}
                         </Stepper>
                         {(this.state.activeStep === this.getSteps().length) ? (
-                            <Box><Typography variant="body1">View the summary and place your order now!</Typography>
+                            <Box padding="2%"><Typography variant="body1">View the summary and place your order now!</Typography>
                                 <Button onClick={this.handleReset}>
                                     CHANGE
                                 </Button>
