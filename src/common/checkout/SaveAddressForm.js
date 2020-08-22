@@ -38,20 +38,27 @@ export default function SaveAddressForm(props) {
     const onPincodeChanged = (e) => setPincode(e.target.value);
     const display = (field) => (isSaveClicked && (field === null || field === "")) ? classes.show : classes.hide;
     const validate = (field) => (field && (field.length !== 6 || isNaN(field))) ? classes.show : classes.hide;
-    const reset = () => {
-        setFlatname("");
-        setLocality("");
-        setCity("");
-        setState("");
-        setPincode("");
-        setSaveClicked(false);
+    const reset = (isOK) => {
+        if (isOK) {
+            setFlatname("");
+            setLocality("");
+            setCity("");
+            setState("");
+            setPincode("");
+            setSaveClicked(false);
+        }
     }
     const onSave = (e) => {
         setSaveClicked(true);
         if (flatname && locality && city && state &&
             pincode && pincode.length === 6 && !isNaN(pincode)) {
-            props.handleSaveAddressOK();
-            reset();
+            props.handleSaveAddressOK({
+                'city': city,
+                'flat_building_name': flatname,
+                'locality': locality,
+                'pincode': pincode,
+                'state_uuid': state,
+            }, reset);
         }
     };
     return (
