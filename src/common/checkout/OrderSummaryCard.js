@@ -5,8 +5,6 @@ import "font-awesome/css/font-awesome.css"
 
 export default function OrderSummaryCard(props){
 
-    const onClickPlaceOrder = () => {};
-
     return(
         <Card className="order-summary-card" >
             <CardContent>
@@ -46,7 +44,7 @@ export default function OrderSummaryCard(props){
             </CardContent>
             <CardActions>
                 <FormControl fullWidth margin="normal" size="small" variant="standard">
-                    <Button variant="contained" color="primary" id="btn-place" onClick={onClickPlaceOrder}>PLACE ORDER</Button>
+                    <Button variant="contained" color="primary" id="btn-place" onClick={props.handlePlaceOrder}>PLACE ORDER</Button>
                 </FormControl>
             </CardActions>
         </Card>

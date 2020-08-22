@@ -1,20 +1,24 @@
 import React, {Component} from 'react';
-import '../../common/checkout/AddressesGrid'
 import {Box, Stepper, Step, StepLabel, StepContent, Button, Tabs, Typography, AppBar, Tab} from "@material-ui/core";
 import AddressesGrid from "../../common/checkout/AddressesGrid";
 import PaymentOptions from "../../common/checkout/PaymentOptions";
-import {addresses, paymentMethods, states, order} from "../../common/checkout/Test";
 import SaveAddressForm from "../../common/checkout/SaveAddressForm";
 import OrderSummaryCard from "../../common/checkout/OrderSummaryCard";
+import Notification from "../../common/notification/Notification";
 import Header from "../../common/header/Header";
+import {addresses, paymentMethods, states, order} from "../../common/checkout/Test";
 
 export default class Checkout extends Component {
     constructor(props) {
         super(props);
         this.state = {
             activeStep: 0,
-            activeTab: 0
+            activeTab: 0,
+            messageText: null,
+            notificationOpen: false
         }
+        this.handlePlaceOrder = this.handlePlaceOrder.bind(this);
+        this.closeNotification= this.closeNotification.bind(this);
     }
 
     getSteps = () => ['Delivery', 'Payment'];
@@ -22,6 +26,10 @@ export default class Checkout extends Component {
     handleBack = () => this.setState({activeStep: this.state.activeStep - 1});
     handleReset = () => this.setState({activeStep: 0});
     handleSwitch = (e, v) => {this.setState({activeTab: v})};
+    handlePlaceOrder = () => this.showNotification("Order placed successfully!")
+    showNotification = (message) => this.setState({messageText: message, notificationOpen: true});
+    closeNotification = () => this.setState({messageText: null, notificationOpen: false});
+
     getStepContent = (step) => {
         switch (step) {
             case 0:
@@ -77,9 +85,10 @@ export default class Checkout extends Component {
                         }
                     </Box>
                     <Box width="27%" padding="1%" >
-                        <OrderSummaryCard order={order}/>
+                        <OrderSummaryCard order={order} handlePlaceOrder={this.handlePlaceOrder}/>
                     </Box>
                 </Box>
+                <Notification messageText={this.state.messageText} open={this.state.notificationOpen} onClose={this.closeNotification}/>
             </Box>
 
         );
