@@ -1,4 +1,5 @@
-import React, {Component} from 'react';
+import React from 'react';
+
 import {
     Box,
     Stepper,
@@ -12,7 +13,11 @@ import {
     Tab,
     useMediaQuery
 } from "@material-ui/core";
-import {withStyles} from '@material-ui/core/styles';
+
+import {
+    withStyles
+} from '@material-ui/core/styles';
+
 import AddressesGrid from "../../common/checkout/AddressesGrid";
 import PaymentOptions from "../../common/checkout/PaymentOptions";
 import SaveAddressForm from "../../common/checkout/SaveAddressForm";
@@ -20,6 +25,7 @@ import OrderSummaryCard from "../../common/checkout/OrderSummaryCard";
 import Notification from "../../common/notification/Notification";
 import Header from "../../common/header/Header";
 import "./Checkout.css";
+
 import {addresses, paymentMethods, states, order} from "../../common/checkout/Test";
 
 const useStyles = (theme) => ({
@@ -55,7 +61,7 @@ const withMediaQuery = () => Component => props => {
     return <Component isSmallScreen={isSmallScreen} {...props} />;
 };
 
-class Checkout extends Component {
+class Checkout extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -63,21 +69,31 @@ class Checkout extends Component {
             activeTab: 0,
             messageText: null,
             notificationOpen: false,
+            addressId: null,
+            paymentModeId: null,
         }
         this.handlePlaceOrder = this.handlePlaceOrder.bind(this);
         this.closeNotification = this.closeNotification.bind(this);
+        this.setAddressId = this.setAddressId.bind(this);
+        this.setPaymentModeId = this.setPaymentModeId.bind(this);
     }
 
     getSteps = () => ['Delivery', 'Payment'];
-    handleNext = () => this.setState({activeStep: this.state.activeStep + 1});
+    handleNext = () => {
+        if((this.state.activeStep===0 && this.state.addressId) ||
+            (this.state.activeStep===1 && this.state.paymentModeId) ){
+            this.setState({activeStep: this.state.activeStep + 1});
+        }
+    }
     handleBack = () => this.setState({activeStep: this.state.activeStep - 1});
     handleReset = () => this.setState({activeStep: 0});
-    handleSwitch = (e, v) => {
-        this.setState({activeTab: v})
-    };
+    handleSwitch = (e, v) => this.setState({activeTab: v});
+    handleSaveAddressOK = () => this.setState({activeTab: 0});
     handlePlaceOrder = () => this.showNotification("Order placed successfully!")
     showNotification = (message) => this.setState({messageText: message, notificationOpen: true});
     closeNotification = () => this.setState({messageText: null, notificationOpen: false});
+    setAddressId = (id) => this.setState({addressId: id});
+    setPaymentModeId = (id) => this.setState({paymentModeId: id});
     getStepContent = (step) => {
         switch (step) {
             case 0:
@@ -89,15 +105,15 @@ class Checkout extends Component {
                         </Tabs>
                     </AppBar>
                         <Box display={this.state.activeTab === 0 ? "block" : "none"}>
-                            <AddressesGrid addresses={addresses} cols={(this.props.isSmallScreen) ? 2 : 3}/>
+                            <AddressesGrid addresses={addresses} cols={(this.props.isSmallScreen) ? 2 : 3} setAddressId = {this.setAddressId}/>
                         </Box>
                         <Box display={this.state.activeTab === 1 ? "block" : "none"}>
-                            <SaveAddressForm states={states}/>
+                            <SaveAddressForm states={states} handleSaveAddressOK={this.handleSaveAddressOK}/>
                         </Box>
                     </Box>
                 );
             case 1:
-                return (<PaymentOptions paymentModes={paymentMethods}/>);
+                return (<PaymentOptions paymentModes={paymentMethods} setPaymentModeId = {this.setPaymentModeId}/>);
             default:
                 return 'Unknown step';
         }

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {
     Card,
     CardContent,
@@ -9,8 +10,14 @@ import {
     CardActions,
     IconButton,
 } from '@material-ui/core';
-import {CheckCircleRounded} from "@material-ui/icons";
-import {makeStyles} from '@material-ui/core/styles';
+
+import {
+    CheckCircleRounded
+} from "@material-ui/icons";
+
+import {
+    makeStyles
+} from '@material-ui/core/styles';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -31,6 +38,11 @@ const useStyles = makeStyles((theme) => ({
     },
     gridTile: {
         height: 'auto',
+    },
+    selected: {
+        boxShadow: '3px 3px 8px 0px darkgrey',
+        borderColor: 'darkgrey',
+        border: 'solid',
     },
     addressCard: {
         padding: "1%",
@@ -53,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
 export default function AddressesGrid(props) {
     const [selected, setSelected] = React.useState(
         (props.addresses !== null && props.addresses.length > 0) ?
-            [true, ...new Array(props.addresses.length - 1).fill(false)] : []
+            [...new Array(props.addresses.length).fill(false)] : []
     );
     const classes = useStyles();
     const getClass = (active) => (active) ? classes.active : classes.inactive;
@@ -62,6 +74,7 @@ export default function AddressesGrid(props) {
         if (e.target.value !== null) {
             newArr[e.target.value] = true;
             setSelected(newArr);
+            props.setAddressId(e.target.id);
         }
     }
     return (
@@ -70,8 +83,8 @@ export default function AddressesGrid(props) {
                 (props.addresses !== null && props.addresses.length > 0) ?
                     props.addresses.map((address, index) => (
                         <GridListTile className={classes.gridTile} key={address.id}>
-                            <Card className={"customer-address " + classes.addressCard}
-                                  raised={selected[index] === true}>
+                            <Card className={"customer-address " + classes.addressCard + " " +
+                            (selected[index] && classes.selected)} raised={selected[index] === true}>
                                 <CardContent className={classes.cardContent}>
                                     <Box display="flex" flexDirection="column" alignItems="flex-start">
                                         <Typography className="address-line"

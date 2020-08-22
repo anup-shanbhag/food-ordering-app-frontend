@@ -1,6 +1,12 @@
 import React from 'react';
-import {Button, Snackbar, IconButton} from '@material-ui/core';
-import Close from '@material-ui/icons/Close';
+
+import {
+    Button,
+    Snackbar,
+    IconButton
+} from '@material-ui/core';
+
+import Close from '@material-ui/icons';
 
 export default function Notification(props) {
 

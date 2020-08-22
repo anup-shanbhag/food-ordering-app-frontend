@@ -1,11 +1,21 @@
 import React from 'react';
-import {Box, FormControl, FormLabel, Radio, RadioGroup, FormControlLabel, Typography} from '@material-ui/core';
+
+import {
+    Box,
+    FormControl,
+    FormLabel,
+    Radio,
+    RadioGroup,
+    FormControlLabel,
+    Typography
+} from '@material-ui/core';
 
 
 export default function PaymentOptions(props) {
     const [paymentMode, setPaymentMode] = React.useState("");
     const onPaymentModeChanged = (e) => {
         setPaymentMode(e.target.value);
+        props.setPaymentModeId(e.target.value);
     }
     return (
         <Box padding="1%" margin="0%">
