@@ -71,8 +71,8 @@ export default function AddressesGrid(props) {
     const getClass = (active) => (active) ? classes.active : classes.inactive;
     const onClick = (e) => {
         let newArr = [...selected].fill(false);
-        if (e.target.value !== null) {
-            newArr[e.target.value] = true;
+        if (e.currentTarget.value !== null) {
+            newArr[e.currentTarget.value] = true;
             setSelected(newArr);
             props.setAddressId(e.target.id);
         }
