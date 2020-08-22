@@ -3,8 +3,6 @@ import Config from "./Config";
 const CallApi = async (endpoint, headers, callback) => {
     let response = await fetch(endpoint, headers);
     let jsonResponse = await response.json();
-    console.log(response.ok);
-    console.log(jsonResponse);
     if(response.ok){
         callback(true, jsonResponse);
     }
@@ -23,16 +21,20 @@ const GetEndpointURI = (name, param, value) => {
 }
 
 const GetHttpHeaders = (httpMethod, accessToken, content) => {
-    let headers = {
+    let settings = {
         method: httpMethod,
-        accept: "application/json"
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            authorization: accessToken
+        },
+        body: content
     };
-    if (accessToken !== null || accessToken !== "") {
-        headers['access-token'] = accessToken;
-    }
-    if (content !== null) {
-        headers['body'] = JSON.stringify(content);
-    }
+    if(!settings.headers.authorization)
+        delete settings.headers.authorization;
+    if(!settings.body)
+        delete settings.body;
+    return settings;
 }
 
 export {GetEndpointURI, GetHttpHeaders, CallApi};

@@ -26,7 +26,7 @@ import Notification from "../../common/notification/Notification";
 import Header from "../../common/header/Header";
 import "./Checkout.css";
 
-import {addresses, paymentMethods, states, order} from "../../common/checkout/Test";
+import {order} from "../../common/checkout/Test";
 import {GetEndpointURI, GetHttpHeaders, CallApi} from "../../common/utils/ApiHelper";
 
 const useStyles = (theme) => ({
@@ -104,14 +104,13 @@ class Checkout extends React.Component {
 
     setAvailableAddresses = (result, response) => {
         if (result) {
-            console.log(response);
             this.setState({addresses: response.addresses});
         } else {
             this.setState({addresses: null});
         }
     }
     getAvailableAddresses = () => CallApi(GetEndpointURI('Get Addresses'),
-        GetHttpHeaders('GET', window.sessionStorage.getItem("access-token")),
+        GetHttpHeaders('GET',"Bearer " + window.sessionStorage.getItem("access-token")),
         this.setAvailableAddresses);
 
     setAvailableStates = (result, response) => {
@@ -147,8 +146,8 @@ class Checkout extends React.Component {
                         </Tabs>
                     </AppBar>
                         <Box display={this.state.activeTab === 0 ? "block" : "none"}>
-                            <AddressesGrid addresses={addresses} cols={(this.props.isSmallScreen) ? 2 : 3}
-                                           setAddressId={this.setAddressId}/>
+                            <AddressesGrid addresses={this.state.addresses} cols={(this.props.isSmallScreen) ? 2 : 3}
+                                           setAddressId={this.setSelectedAddressId}/>
                         </Box>
                         <Box display={this.state.activeTab === 1 ? "block" : "none"}>
                             <SaveAddressForm states={this.state.states} handleSaveAddressOK={this.handleSaveAddressOK}/>
@@ -157,7 +156,7 @@ class Checkout extends React.Component {
                 );
             case 1:
                 return (<PaymentOptions paymentModes={this.state.paymentMethods}
-                                        setPaymentModeId={this.setPaymentModeId}/>);
+                                        setPaymentModeId={this.setSelectedPaymentModeId}/>);
             default:
                 return 'Unknown step';
         }
