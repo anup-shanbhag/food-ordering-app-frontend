@@ -114,8 +114,11 @@ class Checkout extends React.Component {
         this.setAvailablePaymentMethods = this.setAvailablePaymentMethods.bind(this);
         this.setAvailableStates = this.setAvailableStates.bind(this);
         this.setAvailableAddresses = this.setAvailableAddresses.bind(this);
+        this.saveNewAddress = this.saveNewAddress.bind(this);
         this.msgSaveOrderNotOK = "Unable to place your order! Please try again!";
         this.msgSaveOrderOK = "Order placed successfully! Your order ID is $orderId.";
+        this.msgSaveAddressNotOK = "Unable to save address! Please try again!";
+        this.msgSaveAddressOK = "Address saved successfully!";
     }
 
     getSteps = () => ['Delivery', 'Payment'];
@@ -128,7 +131,6 @@ class Checkout extends React.Component {
     handleBack = () => this.setState({activeStep: this.state.activeStep - 1});
     handleReset = () => this.setState({activeStep: 0});
     handleSwitch = (e, v) => this.setState({activeTab: v});
-    handleSaveAddressOK = () => this.setState({activeTab: 0});
     handlePlaceOrder = () => this.showNotification("Order placed successfully!")
     showNotification = (message) => this.setState({messageText: message, notificationOpen: true});
     closeNotification = () => this.setState({messageText: null, notificationOpen: false});
@@ -143,7 +145,7 @@ class Checkout extends React.Component {
         }
     }
     getAvailableAddresses = () => CallApi(GetEndpointURI('Get Addresses'),
-        GetHttpHeaders('GET',"Bearer " + window.sessionStorage.getItem("access-token")),
+        GetHttpHeaders('GET', "Bearer " + window.sessionStorage.getItem("access-token")),
         this.setAvailableAddresses);
 
     setAvailableStates = (result, response) => {
@@ -168,6 +170,25 @@ class Checkout extends React.Component {
     getAvailablePaymentMethods = () => CallApi(GetEndpointURI('Get Payment Modes'),
         GetHttpHeaders('GET'), this.setAvailablePaymentMethods);
 
+    saveNewAddress = (address, callback) => CallApi(GetEndpointURI('Save Address'),
+        GetHttpHeaders('POST', "Bearer " + window.sessionStorage.getItem("access-token"),
+            JSON.stringify(address)), callback, this.handleSaveAddressOK);
+
+    handleSaveAddressOK = (result) => {
+        if (result) {
+            this.setState({
+                activeTab: 0, messageText: this.msgSaveAddressOK,
+                notificationOpen: true
+            });
+            this.getAvailableAddresses();
+        } else {
+            this.setState({
+                messageText: this.msgSaveAddressNotOK,
+                notificationOpen: true
+            });
+        }
+    }
+
     getStepContent = (step) => {
         switch (step) {
             case 0:
@@ -183,7 +204,7 @@ class Checkout extends React.Component {
                                            setAddressId={this.setSelectedAddressId}/>
                         </Box>
                         <Box display={this.state.activeTab === 1 ? "block" : "none"}>
-                            <SaveAddressForm states={this.state.states} handleSaveAddressOK={this.handleSaveAddressOK}/>
+                            <SaveAddressForm states={this.state.states} handleSaveAddressOK={this.saveNewAddress}/>
                         </Box>
                     </Box>
                 );

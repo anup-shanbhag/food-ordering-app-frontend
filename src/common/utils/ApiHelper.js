@@ -1,14 +1,10 @@
 import Config from "./Config";
 
-const CallApi = async (endpoint, headers, callback) => {
+const CallApi = async (endpoint, headers, ...callbacks) => {
     let response = await fetch(endpoint, headers);
     let jsonResponse = await response.json();
-    if(response.ok){
-        callback(true, jsonResponse);
-    }
-    else{
-        callback(false, null);
-    }
+    callbacks.map(callback => (response.ok) ?
+        callback(true, jsonResponse) : callback(false, null));
 }
 
 const GetEndpointURI = (name, param, value) => {
