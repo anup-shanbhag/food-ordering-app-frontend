@@ -108,6 +108,7 @@ class Checkout extends React.Component {
             }
         }
         this.handlePlaceOrder = this.handlePlaceOrder.bind(this);
+        this.placeNewOrder = this.placeNewOrder.bind(this);
         this.closeNotification = this.closeNotification.bind(this);
         this.setSelectedAddressId = this.setSelectedAddressId.bind(this);
         this.setSelectedPaymentModeId = this.setSelectedPaymentModeId.bind(this);
@@ -126,17 +127,10 @@ class Checkout extends React.Component {
     getSteps = () => ['Delivery', 'Payment'];
     handleNext = () => {
         if(this.state.activeStep === 0 && !this.state.selectedAddressId){
-            console.log(this.state.selectedAddressId);
-            this.setState({
-                messageText: this.msgAddressNotSelected,
-                notificationOpen: true
-            });
+            this.showNotification(this.msgAddressNotSelected);
         }
         else if(this.state.activeStep === 1 && !this.state.selectedPaymentMethodId){
-            this.setState({
-                messageText: this.msgPaymentNotSelected,
-                notificationOpen: true
-            });
+            this.showNotification(this.msgPaymentNotSelected);
         }
         else {
             this.setState({activeStep: this.state.activeStep + 1});
@@ -145,7 +139,23 @@ class Checkout extends React.Component {
     handleBack = () => this.setState({activeStep: this.state.activeStep - 1});
     handleReset = () => this.setState({activeStep: 0});
     handleSwitch = (e, v) => this.setState({activeTab: v});
-    handlePlaceOrder = () => this.showNotification("Order placed successfully!")
+    handleSaveAddress = (result) => {
+        if (result) {
+            this.setState({activeTab: 0});
+            this.showNotification(this.msgSaveAddressOK);
+            this.getAvailableAddresses();
+        } else {
+            this.showNotification(this.msgSaveAddressNotOK);
+        }
+    }
+    handlePlaceOrder = (result, response) => {
+        if(result){
+            this.showNotification(this.msgSaveOrderOK.replace("$orderId", response.id));
+        }
+        else{
+            this.showNotification(this.msgSaveOrderNotOK);
+        }
+    }
     showNotification = (message) => this.setState({messageText: message, notificationOpen: true});
     closeNotification = () => this.setState({messageText: null, notificationOpen: false});
     setSelectedAddressId = (id) => this.setState({selectedAddressId: id});
@@ -187,23 +197,22 @@ class Checkout extends React.Component {
 
     saveNewAddress = (address, callback) => CallApi(GetEndpointURI('Save Address'),
         GetHttpHeaders('POST', "Bearer " + window.sessionStorage.getItem("access-token"),
-            JSON.stringify(address)), callback, this.handleSaveAddressOK);
+            JSON.stringify(address)), callback, this.handleSaveAddress);
 
-    handleSaveAddressOK = (result) => {
-        if (result) {
-            this.setState({
-                activeTab: 0, messageText: this.msgSaveAddressOK,
-                notificationOpen: true
-            });
-            this.getAvailableAddresses();
-        } else {
-            this.setState({
-                messageText: this.msgSaveAddressNotOK,
-                notificationOpen: true
-            });
-        }
+    placeNewOrder = () => {
+        delete this.state.order.restaurant_name;
+        delete this.state.order.discount;
+        delete this.state.order.coupon_id;
+        this.state.order.item_quantities.map(item => {
+            delete item.type;
+            delete item.item_name;
+        })
+        this.state.order.address_id = this.state.selectedAddressId;
+        this.state.order.payment_id = this.state.selectedPaymentMethodId;
+        CallApi(GetEndpointURI('Save Order'),
+            GetHttpHeaders('POST', "Bearer " + window.sessionStorage.getItem("access-token"),
+                JSON.stringify(this.state.order)), this.handlePlaceOrder);
     }
-
     getStepContent = (step) => {
         switch (step) {
             case 0:
@@ -277,7 +286,7 @@ class Checkout extends React.Component {
                     <Box
                         className={(this.props.isSmallScreen) ? classes.summaryCardContainerSm : classes.summaryCardContainer}
                         padding="1%">
-                        <OrderSummaryCard order={this.state.order} handlePlaceOrder={this.handlePlaceOrder}/>
+                        <OrderSummaryCard order={this.state.order} handlePlaceOrder={this.placeNewOrder}/>
                     </Box>
                 </Box>
                 <Notification messageText={this.state.messageText} open={this.state.notificationOpen}
