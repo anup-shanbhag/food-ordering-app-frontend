@@ -82,6 +82,7 @@ class Checkout extends React.Component {
         this.setSelectedPaymentModeId = this.setSelectedPaymentModeId.bind(this);
         this.setAvailablePaymentMethods = this.setAvailablePaymentMethods.bind(this);
         this.setAvailableStates = this.setAvailableStates.bind(this);
+        this.setAvailableAddresses = this.setAvailableAddresses.bind(this);
     }
 
     getSteps = () => ['Delivery', 'Payment'];
@@ -100,26 +101,40 @@ class Checkout extends React.Component {
     closeNotification = () => this.setState({messageText: null, notificationOpen: false});
     setSelectedAddressId = (id) => this.setState({selectedAddressId: id});
     setSelectedPaymentModeId = (id) => this.setState({selectedPaymentMethodId: id});
-    setAvailablePaymentMethods = (result, response) => {
+
+    setAvailableAddresses = (result, response) => {
         if (result) {
             console.log(response);
-            this.setState({paymentMethods: response.paymentMethods});
+            this.setState({addresses: response.addresses});
         } else {
-            this.setState({paymentMethods: null});
+            this.setState({addresses: null});
         }
     }
-    getAvailablePaymentMethods = () => CallApi(GetEndpointURI('Get Payment Modes'),
-        GetHttpHeaders('GET'), this.setAvailablePaymentMethods);
+    getAvailableAddresses = () => CallApi(GetEndpointURI('Get Addresses'),
+        GetHttpHeaders('GET', window.sessionStorage.getItem("access-token")),
+        this.setAvailableAddresses);
+
     setAvailableStates = (result, response) => {
         if (result) {
-            console.log(response);
             this.setState({states: response.states});
         } else {
             this.setState({states: null});
         }
     }
+
     getAvailableStates = () => CallApi(GetEndpointURI('Get States'),
         GetHttpHeaders('GET'), this.setAvailableStates);
+
+    setAvailablePaymentMethods = (result, response) => {
+        if (result) {
+            this.setState({paymentMethods: response.paymentMethods});
+        } else {
+            this.setState({paymentMethods: null});
+        }
+    }
+
+    getAvailablePaymentMethods = () => CallApi(GetEndpointURI('Get Payment Modes'),
+        GetHttpHeaders('GET'), this.setAvailablePaymentMethods);
 
     getStepContent = (step) => {
         switch (step) {
@@ -150,6 +165,7 @@ class Checkout extends React.Component {
 
 
     componentDidMount() {
+        this.getAvailableAddresses();
         this.getAvailableStates();
         this.getAvailablePaymentMethods();
     }
