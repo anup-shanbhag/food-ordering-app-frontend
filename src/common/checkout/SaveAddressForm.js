@@ -1,6 +1,19 @@
 import React from "react";
-import {Box, FormControl, FormHelperText, Input, InputLabel, NativeSelect, Button, Typography} from '@material-ui/core';
-import {makeStyles} from '@material-ui/core/styles';
+
+import {
+    Box,
+    FormControl,
+    FormHelperText,
+    Input,
+    InputLabel,
+    NativeSelect,
+    Button,
+    Typography
+} from '@material-ui/core';
+
+import {
+    makeStyles
+} from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
     show: {
@@ -24,13 +37,22 @@ export default function SaveAddressForm(props) {
     const onStateChanged = (e) => setState(e.target.value);
     const onPincodeChanged = (e) => setPincode(e.target.value);
     const display = (field) => (isSaveClicked && (field === null || field === "")) ? classes.show : classes.hide;
+    const validate = (field) => (field && (field.length !== 6 || isNaN(field))) ? classes.show : classes.hide;
+    const reset = () => {
+        setFlatname("");
+        setLocality("");
+        setCity("");
+        setState("");
+        setPincode("");
+        setSaveClicked(false);
+    }
     const onSave = (e) => {
         setSaveClicked(true);
-        console.log(flatname);
-        console.log(locality);
-        console.log(city);
-        console.log(state);
-        console.log(pincode);
+        if (flatname && locality && city && state &&
+            pincode && pincode.length === 6 && !isNaN(pincode)) {
+            props.handleSaveAddressOK();
+            reset();
+        }
     };
     return (
         <Box width="60%" display="flex" flexDirection="column" padding="2%" margin="0%">
@@ -53,7 +75,7 @@ export default function SaveAddressForm(props) {
                 <InputLabel htmlFor="state">State</InputLabel>
                 <NativeSelect id="state" value={state} onChange={onStateChanged}>
                     <option value=""/>
-                    {props.states.map(state => (
+                    {props.states && props.states.map(state => (
                         <option key={state.id} value={state.id}>{state.state_name}</option>
                     ))}
                 </NativeSelect>
@@ -63,6 +85,8 @@ export default function SaveAddressForm(props) {
                 <InputLabel htmlFor="pincode">Pincode</InputLabel>
                 <Input id="pincode" type="text" value={pincode} onChange={onPincodeChanged}/>
                 <FormHelperText error className={display(pincode)}>required</FormHelperText>
+                <FormHelperText error className={validate(pincode)}>Pincode must contain only numbers and must be 6
+                    digits long</FormHelperText>
             </FormControl>
             <FormControl margin="normal" size="small" variant="standard">
                 <Typography variant="h2" gutterBottom/>
