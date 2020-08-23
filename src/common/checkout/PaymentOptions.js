@@ -12,7 +12,7 @@ import {
 
 
 export default function PaymentOptions(props) {
-    const [paymentMode, setPaymentMode] = React.useState("");
+    const [paymentMode, setPaymentMode] = React.useState(props.selectedPaymentMode);
     const onPaymentModeChanged = (e) => {
         setPaymentMode(e.target.value);
         props.setPaymentModeId(e.target.value);
