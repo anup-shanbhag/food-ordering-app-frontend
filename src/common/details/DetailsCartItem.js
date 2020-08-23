@@ -20,13 +20,15 @@ export default function DetailsCartItem(props) {
                 <Typography variant="body1" className="item-name"> {props.cartItem.name} </Typography>
             </Grid>
             <Grid item xs={1} lg={1} className="citem-remove">
-                <IconButton> <RemoveIcon/> </IconButton>
+                <IconButton value={props.cartItem}
+                            onClick={props.handleRemoveCartItem.bind(this, props.cartItem)}> <RemoveIcon/> </IconButton>
             </Grid>
             <Grid item xs={1} lg={1} className="citem-quantity">
                 <Typography> {props.cartItem.quantity} </Typography>
             </Grid>
             <Grid item xs={1} lg={1} className="citem-add">
-                <IconButton> <AddIcon/> </IconButton>
+                <IconButton value={props.cartItem}
+                            onClick={props.handleAddCartItem.bind(this, props.cartItem)}> <AddIcon/> </IconButton>
             </Grid>
             <Grid item xs={1} lg={1}/>
             <Grid item xs={2} lg={2}>

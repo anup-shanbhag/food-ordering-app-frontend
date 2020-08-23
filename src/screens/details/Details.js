@@ -11,15 +11,19 @@ class Details extends Component {
         super();
         this.state = {
             restaurant: null,
-            cartItem: {id:null, name:null, type:null, quantity:0, price:0},
+            cartItem: {id:null, name:null, type:null, quantity:0, price:0, itemPrice:0},
             cartItems: [],
             totalAmount: 0,
             totalItems: 0,
         }
-        this.handleAddItem = this.handleAddItem.bind(this);
+        this.handleAddMenuItem = this.handleAddMenuItem.bind(this);
+        this.handleAddCartItem = this.handleAddCartItem.bind(this);
+        this.handleRemoveCartItem = this.handleRemoveCartItem.bind(this);
     }
 
-    handleAddItem = (item) => this.addToCartHandler(item);
+    handleAddMenuItem = (item) => this.addToCartHandler(item);
+    handleAddCartItem = (item) => this.increaseCartItemHandler(item);
+    handleRemoveCartItem = (item) => this.decreateCartItemHandler(item);
 
     componentDidMount() {
         this.getRestaurant();
@@ -49,7 +53,7 @@ class Details extends Component {
                             <div className="item-section">
                                 {this.state.restaurant.categories.map((category, index) => (
                                     <span key={category.id + "category"}>
-                                        <DetailsMenuCard category={category} handleAddItem={this.handleAddItem}/>
+                                        <DetailsMenuCard category={category} handleAddMenuItem={this.handleAddMenuItem}/>
                                     </span>
                                 ))
                                 }
@@ -59,7 +63,9 @@ class Details extends Component {
                             <div className="cart-section">
                                 <DetailsCartCard cartItems={this.state.cartItems}
                                                  totalAmount={this.state.totalAmount}
-                                                 totalItems={this.state.totalItems}/>
+                                                 totalItems={this.state.totalItems}
+                                                 handleAddCartItem={this.handleAddCartItem}
+                                                 handleRemoveCartItem={this.handleRemoveCartItem}/>
                             </div>
                         </div>
                     </div>
@@ -101,11 +107,12 @@ class Details extends Component {
         newItem.type = item.item_type;
         newItem.quantity = 1;
         newItem.price = item.price * newItem.quantity;
+        newItem.itemPrice = item.price;
 
         if(this.state.cartItems.length !== 0 && this.state.cartItems.some(cItem => (cItem.id === item.id))){
-            var index = this.state.cartItems.findIndex(cItem => cItem.name === item.item_name);
+            const index = this.state.cartItems.findIndex(cItem => cItem.id === item.id);
 
-            var updateItem = this.state.cartItems[index];
+            const updateItem = this.state.cartItems[index];
             updateItem.quantity = this.state.cartItems[index].quantity + 1;
             updateItem.price = this.state.cartItems[index].price + item.price;
 
@@ -116,6 +123,34 @@ class Details extends Component {
             this.setState({cartItem: {}});
             this.state.cartItems.push(this.state.cartItem);
         }
+        this.setState({totalAmount: totalAmount})
+    }
+
+
+    increaseCartItemHandler = (item) => {
+        const index = this.state.cartItems.findIndex(cItem => cItem.id === item.id);
+        const updateItem = this.state.cartItems[index];
+        updateItem.quantity = this.state.cartItems[index].quantity + 1;
+        updateItem.price = this.state.cartItems[index].price + item.itemPrice;
+        this.setState(item);
+
+        let totalAmount = this.state.totalAmount;
+        totalAmount += item.itemPrice;
+        this.setState({totalAmount: totalAmount})
+    }
+
+    decreateCartItemHandler = (item) => {
+        const index = this.state.cartItems.findIndex(cItem => cItem.id === item.id);
+        const updateItem = this.state.cartItems[index];
+        if(updateItem.quantity === 1){
+            this.state.cartItems.splice(index, 1);
+        }else if(updateItem.quantity > 1) {
+            updateItem.quantity = this.state.cartItems[index].quantity - 1;
+            updateItem.price = this.state.cartItems[index].price - item.itemPrice;
+            this.setState(item);
+        }
+        let totalAmount = this.state.totalAmount;
+        totalAmount -= item.itemPrice;
         this.setState({totalAmount: totalAmount})
     }
 }
