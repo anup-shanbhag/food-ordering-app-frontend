@@ -6,7 +6,8 @@ import {
     FormHelperText,
     Input,
     InputLabel,
-    NativeSelect,
+    Select,
+    MenuItem,
     Button,
     Typography
 } from '@material-ui/core';
@@ -21,7 +22,11 @@ const useStyles = makeStyles({
     },
     hide: {
         display: 'none'
-    }
+    },
+    options: {
+        maxHeight: "40%",
+        marginTop: "3%",
+    },
 });
 export default function SaveAddressForm(props) {
     const [flatname, setFlatname] = React.useState("");
@@ -61,6 +66,13 @@ export default function SaveAddressForm(props) {
             }, reset);
         }
     };
+    const menuProps = {
+        'PaperProps': {
+            style: {
+                maxHeight: "24%"
+            }
+        }
+    };
     return (
         <Box width="60%" display="flex" flexDirection="column" padding="2%" margin="0%">
             <FormControl required margin="normal" size="small" variant="standard">
@@ -80,12 +92,11 @@ export default function SaveAddressForm(props) {
             </FormControl>
             <FormControl required margin="normal" size="small" variant="standard">
                 <InputLabel htmlFor="state">State</InputLabel>
-                <NativeSelect id="state" value={state} onChange={onStateChanged}>
-                    <option value=""/>
-                    {props.states && props.states.map(state => (
-                        <option key={state.id} value={state.id}>{state.state_name}</option>
+                <Select id='state' MenuProps={menuProps} value={state} onChange={onStateChanged}>
+                    {props.states && props.states.map((state, index) => (
+                        <MenuItem key={state.id} value={state.id} index={index}>{state.state_name}</MenuItem>
                     ))}
-                </NativeSelect>
+                </Select>
                 <FormHelperText error className={display(state)}>required</FormHelperText>
             </FormControl>
             <FormControl required margin="normal" size="small" variant="standard">

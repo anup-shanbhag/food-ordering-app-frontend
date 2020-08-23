@@ -23,10 +23,9 @@ import PaymentOptions from "../../common/checkout/PaymentOptions";
 import SaveAddressForm from "../../common/checkout/SaveAddressForm";
 import OrderSummaryCard from "../../common/checkout/OrderSummaryCard";
 import Notification from "../../common/notification/Notification";
+import {GetEndpointURI, GetHttpHeaders, CallApi} from "../../common/utils/ApiHelper";
 import Header from "../../common/header/Header";
 import "./Checkout.css";
-
-import {GetEndpointURI, GetHttpHeaders, CallApi} from "../../common/utils/ApiHelper";
 
 const useStyles = (theme) => ({
     checkoutContainer: {
@@ -73,7 +72,9 @@ class Checkout extends React.Component {
             messageText: null,
             notificationOpen: false,
             selectedAddressId: null,
+            selectedAddressIndex: -1,
             selectedPaymentMethodId: null,
+            selectedPaymentMethodIndex: -1,
             order: {
                 "address_id": null,
                 "bill": 620.0,
@@ -126,13 +127,11 @@ class Checkout extends React.Component {
 
     getSteps = () => ['Delivery', 'Payment'];
     handleNext = () => {
-        if(this.state.activeStep === 0 && !this.state.selectedAddressId){
+        if (this.state.activeStep === 0 && !this.state.selectedAddressId) {
             this.showNotification(this.msgAddressNotSelected);
-        }
-        else if(this.state.activeStep === 1 && !this.state.selectedPaymentMethodId){
+        } else if (this.state.activeStep === 1 && !this.state.selectedPaymentMethodId) {
             this.showNotification(this.msgPaymentNotSelected);
-        }
-        else {
+        } else {
             this.setState({activeStep: this.state.activeStep + 1});
         }
     }
@@ -149,16 +148,20 @@ class Checkout extends React.Component {
         }
     }
     handlePlaceOrder = (result, response) => {
-        if(result){
+        if (result) {
             this.showNotification(this.msgSaveOrderOK.replace("$orderId", response.id));
-        }
-        else{
+        } else {
             this.showNotification(this.msgSaveOrderNotOK);
         }
     }
     showNotification = (message) => this.setState({messageText: message, notificationOpen: true});
     closeNotification = () => this.setState({messageText: null, notificationOpen: false});
-    setSelectedAddressId = (id) => this.setState({selectedAddressId: id});
+    setSelectedAddressId = (id) => {
+        this.setState({
+            selectedAddressId: id,
+            selectedAddressIndex: this.state.addresses.findIndex(address => address.id === id)
+        });
+    }
     setSelectedPaymentModeId = (id) => this.setState({selectedPaymentMethodId: id});
 
     setAvailableAddresses = (result, response) => {
@@ -225,7 +228,8 @@ class Checkout extends React.Component {
                     </AppBar>
                         <Box display={this.state.activeTab === 0 ? "block" : "none"}>
                             <AddressesGrid addresses={this.state.addresses} cols={(this.props.isSmallScreen) ? 2 : 3}
-                                           setAddressId={this.setSelectedAddressId}/>
+                                           setAddressId={this.setSelectedAddressId}
+                                           selectedIndex={this.state.selectedAddressIndex}/>
                         </Box>
                         <Box display={this.state.activeTab === 1 ? "block" : "none"}>
                             <SaveAddressForm states={this.state.states} handleSaveAddressOK={this.saveNewAddress}/>
@@ -234,7 +238,8 @@ class Checkout extends React.Component {
                 );
             case 1:
                 return (<PaymentOptions paymentModes={this.state.paymentMethods}
-                                        setPaymentModeId={this.setSelectedPaymentModeId}/>);
+                                        setPaymentModeId={this.setSelectedPaymentModeId}
+                                        selectedPaymentMode={this.state.selectedPaymentMethodId}/>);
             default:
                 return 'Unknown step';
         }
@@ -251,7 +256,7 @@ class Checkout extends React.Component {
         const {classes} = this.props;
         return (
             <Box>
-                <Header/>
+                <Header showSearch={false}/>
                 <Box display="flex"
                      className={(this.props.isSmallScreen) ? classes.checkoutContainerSm : classes.checkoutContainer}
                      width="100%" mt="1%">
@@ -276,7 +281,8 @@ class Checkout extends React.Component {
                             ))}
                         </Stepper>
                         {(this.state.activeStep === this.getSteps().length) ? (
-                            <Box padding="2%"><Typography variant="body1">View the summary and place your order now!</Typography>
+                            <Box padding="2%"><Typography variant="body1">View the summary and place your order
+                                now!</Typography>
                                 <Button onClick={this.handleReset}>
                                     CHANGE
                                 </Button>
