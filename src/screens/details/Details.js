@@ -23,7 +23,7 @@ class Details extends Component {
 
     handleAddMenuItem = (item) => this.addToCartHandler(item);
     handleAddCartItem = (item) => this.increaseCartItemHandler(item);
-    handleRemoveCartItem = (item) => this.decreateCartItemHandler(item);
+    handleRemoveCartItem = (item) => this.decreaseCartItemHandler(item);
 
     componentDidMount() {
         this.getRestaurant();
@@ -126,7 +126,6 @@ class Details extends Component {
         this.setState({totalAmount: totalAmount})
     }
 
-
     increaseCartItemHandler = (item) => {
         const index = this.state.cartItems.findIndex(cItem => cItem.id === item.id);
         const updateItem = this.state.cartItems[index];
@@ -139,7 +138,7 @@ class Details extends Component {
         this.setState({totalAmount: totalAmount})
     }
 
-    decreateCartItemHandler = (item) => {
+    decreaseCartItemHandler = (item) => {
         const index = this.state.cartItems.findIndex(cItem => cItem.id === item.id);
         const updateItem = this.state.cartItems[index];
         if(updateItem.quantity === 1){
