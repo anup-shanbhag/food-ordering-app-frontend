@@ -27,7 +27,8 @@ export default function DetailsCartCard(props) {
                             {props.cartItems.map(cartItem =>
                                 <span key={cartItem.id}>
                                     <DetailsCartItem cartItem={cartItem} handleAddCartItem={props.handleAddCartItem}
-                                                     handleRemoveCartItem={props.handleRemoveCartItem}/>
+                                                     handleRemoveCartItem={props.handleRemoveCartItem}
+                                                     editable={true}/>
                                 </span>
                             )}
                         </span>
