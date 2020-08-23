@@ -33,7 +33,7 @@ export default function DetailsMenuCard(props) {
                     <Grid item xs={1} lg={1}/>
                     <Grid item xs={1} lg={1}>
                         <IconButton className="item-add" value={item}
-                                    onClick={props.handleAddItem.bind(this, item)}>
+                                    onClick={props.handleAddMenuItem.bind(this, item)}>
                             <AddIcon/>
                         </IconButton>
                     </Grid>
