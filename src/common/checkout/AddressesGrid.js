@@ -62,19 +62,26 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+const getState = (length, index) => {
+    let state = (length > 0) ? new Array(length).fill(false) : [];
+    if (index < length && index >= 0) {
+        state[index] = true
+    }
+    return state;
+}
+
 export default function AddressesGrid(props) {
     const [selected, setSelected] = React.useState(
         (props.addresses !== null && props.addresses.length > 0) ?
-            [...new Array(props.addresses.length).fill(false)] : []
+            [...getState(props.addresses.length, props.selectedIndex)] : []
     );
+
     const classes = useStyles();
     const getClass = (active) => (active) ? classes.active : classes.inactive;
     const onClick = (e) => {
-        let newArr = [...selected].fill(false);
         if (e.currentTarget.value !== null) {
-            newArr[e.currentTarget.value] = true;
-            setSelected(newArr);
-            props.setAddressId(e.target.id);
+            setSelected(getState(props.addresses.length, e.currentTarget.value));
+            props.setAddressId(e.currentTarget.id);
         }
     }
     return (

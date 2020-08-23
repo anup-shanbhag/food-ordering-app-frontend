@@ -6,7 +6,8 @@ import {
     FormHelperText,
     Input,
     InputLabel,
-    NativeSelect,
+    Select,
+    MenuItem,
     Button,
     Typography
 } from '@material-ui/core';
@@ -21,7 +22,11 @@ const useStyles = makeStyles({
     },
     hide: {
         display: 'none'
-    }
+    },
+    options: {
+        maxHeight: "40%",
+        marginTop: "3%",
+    },
 });
 export default function SaveAddressForm(props) {
     const [flatname, setFlatname] = React.useState("");
@@ -38,20 +43,34 @@ export default function SaveAddressForm(props) {
     const onPincodeChanged = (e) => setPincode(e.target.value);
     const display = (field) => (isSaveClicked && (field === null || field === "")) ? classes.show : classes.hide;
     const validate = (field) => (field && (field.length !== 6 || isNaN(field))) ? classes.show : classes.hide;
-    const reset = () => {
-        setFlatname("");
-        setLocality("");
-        setCity("");
-        setState("");
-        setPincode("");
-        setSaveClicked(false);
+    const reset = (isOK) => {
+        if (isOK) {
+            setFlatname("");
+            setLocality("");
+            setCity("");
+            setState("");
+            setPincode("");
+            setSaveClicked(false);
+        }
     }
     const onSave = (e) => {
         setSaveClicked(true);
         if (flatname && locality && city && state &&
             pincode && pincode.length === 6 && !isNaN(pincode)) {
-            props.handleSaveAddressOK();
-            reset();
+            props.handleSaveAddressOK({
+                'city': city,
+                'flat_building_name': flatname,
+                'locality': locality,
+                'pincode': pincode,
+                'state_uuid': state,
+            }, reset);
+        }
+    };
+    const menuProps = {
+        'PaperProps': {
+            style: {
+                maxHeight: "24%"
+            }
         }
     };
     return (
@@ -73,12 +92,11 @@ export default function SaveAddressForm(props) {
             </FormControl>
             <FormControl required margin="normal" size="small" variant="standard">
                 <InputLabel htmlFor="state">State</InputLabel>
-                <NativeSelect id="state" value={state} onChange={onStateChanged}>
-                    <option value=""/>
-                    {props.states && props.states.map(state => (
-                        <option key={state.id} value={state.id}>{state.state_name}</option>
+                <Select id='state' MenuProps={menuProps} value={state} onChange={onStateChanged}>
+                    {props.states && props.states.map((state, index) => (
+                        <MenuItem key={state.id} value={state.id} index={index}>{state.state_name}</MenuItem>
                     ))}
-                </NativeSelect>
+                </Select>
                 <FormHelperText error className={display(state)}>required</FormHelperText>
             </FormControl>
             <FormControl required margin="normal" size="small" variant="standard">
