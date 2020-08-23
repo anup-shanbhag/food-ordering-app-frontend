@@ -23,10 +23,9 @@ import PaymentOptions from "../../common/checkout/PaymentOptions";
 import SaveAddressForm from "../../common/checkout/SaveAddressForm";
 import OrderSummaryCard from "../../common/checkout/OrderSummaryCard";
 import Notification from "../../common/notification/Notification";
+import {GetEndpointURI, GetHttpHeaders, CallApi} from "../../common/utils/ApiHelper";
 import Header from "../../common/header/Header";
 import "./Checkout.css";
-
-import {GetEndpointURI, GetHttpHeaders, CallApi} from "../../common/utils/ApiHelper";
 
 const useStyles = (theme) => ({
     checkoutContainer: {
@@ -257,7 +256,7 @@ class Checkout extends React.Component {
         const {classes} = this.props;
         return (
             <Box>
-                <Header/>
+                <Header showSearch={false}/>
                 <Box display="flex"
                      className={(this.props.isSmallScreen) ? classes.checkoutContainerSm : classes.checkoutContainer}
                      width="100%" mt="1%">
