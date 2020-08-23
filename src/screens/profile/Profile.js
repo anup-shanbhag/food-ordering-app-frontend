@@ -6,7 +6,9 @@ class Profile extends Component{
         return(
             <div>
                 <Header/>
-                <span>Profile</span>
+                <span>Profile page</span>
             </div>
         )};
 }
+
+export default Profile;
