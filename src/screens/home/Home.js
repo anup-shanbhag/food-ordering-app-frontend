@@ -26,7 +26,7 @@ class Home extends Component {
             <div>
                 {this.mounted === true ?
                     <div>
-                        <Header searchHandler={this.searchHandler} />
+                        <Header searchHandler={this.searchHandler} showSearch={true} />
                         {this.state.loading === true ?
                             <Typography className="loading-spinner" variant="h4" color="textSecondary">loading...</Typography>
                            : ""

@@ -24,9 +24,12 @@ import Modal from "react-modal";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from "@material-ui/core/Menu";
 import * as PropTypes from "prop-types";
 import './Header.css'
 import * as EmailVaildator from "email-validator";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 const theme = createMuiTheme({
     palette: {
@@ -40,17 +43,40 @@ const css  =  {
     appBar: {
         backgroundColor: '#263238',
         boxShadow: 'none',
-
+        display: 'block',
     },
+
     toolBar:{
         display: 'flex',
         flexDirection:'row',
         justifyContent : 'space-between',
     },
+    toolBarSM:{
+        display: 'flex',
+        flexDirection:'column',
+        alignItems: 'flex-start',
+    },
     inputSearch:{
         color:'#ffffff',
         width: '300px'
     },
+    user:{
+        textTransform:'unset',
+        backgroundColor:'#263238',
+        boxShadow: 'none',
+        color:'#ffffff',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'start',
+    },
+    userDiv:{
+        alignContent:'center',
+    },
+    loginButton:{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'start',
+    }
 }
 
 const costumStyles = {
@@ -63,6 +89,13 @@ const costumStyles = {
         transform: 'translate(-50%, -50%)'
     }
 }
+
+
+
+const withMediaQuery = () => Component => props => {
+    const isSmallScreen = useMediaQuery('(max-width:650px)');
+    return <Component isSmallScreen={isSmallScreen} {...props} />;
+};
 
 const TabContainer = function (props) {
     return (
@@ -78,8 +111,8 @@ TabContainer.propTypes = {
 
 class Header extends Component{
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             modalIsOpen: false,
             value:0,
@@ -144,6 +177,23 @@ class Header extends Component{
         this.setState({value});
 
     }
+    openMenuHandler = (event) => {
+        this.setState({anchorEl:event.currentTarget});
+    };
+    handleMenuClose=()=>{
+        this.setState({anchorEl:null});
+    }
+
+    logout=()=>{
+        sessionStorage.removeItem('access-token');
+        sessionStorage.removeItem('uuid');
+        sessionStorage.removeItem('first-name');
+        this.setState({
+            loggedIn: false
+        })
+        this.handleMenuClose();
+    }
+
     onLoginClick=()=>{
         let isAnyRequiredFieldEmpty=false;
         if(this.isContactNumberEmptyForLogin(this.state.contactno)){
@@ -159,15 +209,19 @@ class Header extends Component{
                 const headers={'Accept':'application/json','authorization':"Basic " + window.btoa(this.state.contactno + ":" + this.state.password)}
                 fetch("http://localhost:8080/api/customer/login",{method:'POST',headers}).then(function (response){
                     if(response.status === 200){
-                        console.log("log in successful");
-                        that.setState({loginErrorSpan:'dispNone'})
-                        that.setState({value:0});
-                        that.setState({ loggedIn: true });
-                        that.closeModal();
+                        console.log("log in successful: "+  response.headers.get('access-token')+ "");
+                        sessionStorage.setItem("access-token",  response.headers.get('access-token'));
                         return response.json();
                     }else{
                         throw response;
                     }
+                }).then(function(data){
+                    sessionStorage.setItem("uuid", data.id);
+                    sessionStorage.setItem("first-name", data.first_name)
+                    that.setState({loginErrorSpan:'dispNone'})
+                    that.setState({value:0});
+                    that.setState({ loggedIn: true });
+                    that.closeModal();
                 }).catch( err => {
                     err.text().then( errorMessage => {
                         that.setState({loginErrorSpan:'dispBlock'})
@@ -360,36 +414,62 @@ class Header extends Component{
     }
 
 
+
+
+
         render()
         {
             return (
                 <Box>
                     <AppBar position="static" style={css.appBar}>
-                        <Toolbar style={css.toolBar}>
+                        <Toolbar style={this.props.isSmallScreen ? css.toolBarSM : css.toolBar} >
                             <IconButton edge="start" color="inherit">
                                 <FastfoodIcon/>
                             </IconButton>
-                            <Box className="search" style={css.search}>
-                                <ThemeProvider theme={theme}>
-                                    <Input type="text" style={css.inputSearch} color="primary"
-                                           placeholder={'Search by Restaurant Name'}
-                                           startAdornment={
-                                               <InputAdornment position="start" color="primary">
-                                                   <SearchIcon className="mag-glass" color="primary"/>
-                                               </InputAdornment>
-                                           }
-                                           onChange={this.props.searchHandler}>
-                                    </Input>
-                                </ThemeProvider>
-                            </Box>
-                            <Button
+                            {
+                                this.props.showSearch === true ?  <Box className="search" style={css.search}>
+                                    <ThemeProvider theme={theme}>
+                                        <Input type="text" style={css.inputSearch} color="primary"
+                                               placeholder={'Search by Restaurant Name'}
+                                               startAdornment={
+                                                   <InputAdornment position="start" color="primary">
+                                                       <SearchIcon className="mag-glass" color="primary"/>
+                                                   </InputAdornment>
+                                               }
+                                               onChange={this.props.searchHandler}>
+                                        </Input>
+                                    </ThemeProvider>
+                                </Box> : null
+                            }
+                            {
+                                this.state.loggedIn===false ?  <Button
                                 variant="contained"
                                 size="large"
                                 onClick={this.openModalHandler}
-                                startIcon={<Icon size="small"><AccountCircleIcon/></Icon>}
-                            >
-                                Login
-                            </Button>
+                                startIcon={<Icon size="large"><AccountCircleIcon/></Icon>}
+                                style={css.loginButton}
+                            >Login</Button> :
+                               <div style={css.userDiv}>
+                                   <Button
+                                   variant="contained"
+                                   size="large"
+                                   onClick={this.openMenuHandler}
+                                   startIcon={<Icon size="large"><AccountCircleIcon/></Icon>}
+                                   style={css.user}
+                               >{sessionStorage.getItem('first-name')}</Button>
+                                   <Menu className="menu-container"
+                                         id="simple-menu"
+                                         anchorEl={this.state.anchorEl}
+                                         keepMounted
+                                         open={Boolean(this.state.anchorEl)}
+                                         onClose={this.handleMenuClose}
+                                         style={{top: '40px'}}
+                                   >
+                                       <MenuItem onClick={this.onCLickingMyProfile}>My Profile</MenuItem>
+                                       <MenuItem onClick={this.logout}>Logout</MenuItem>
+                                   </Menu>
+                               </div>
+                            }
                         </Toolbar>
                     </AppBar>
                     <Modal ariaHideApp={false} isOpen={this.state.modalIsOpen}
@@ -401,6 +481,7 @@ class Header extends Component{
                         </Tabs>
                         {this.state.value === 0 &&
                         <TabContainer>
+                            <div className="form-fields">
                             <FormControl required>
                                 <InputLabel htmlFor="contactno">Contact No.</InputLabel>
                                 <Input id="contactno" type="text" contactno={this.state.contactno} onChange={this.onContactNumberChange}/>
@@ -413,23 +494,25 @@ class Header extends Component{
                                 <Input id="password" type="password" password={this.state.password} onChange={this.onPasswordChange}/>
                                 <FormHelperText className={this.state.passwordRequired}><span className="red">required</span></FormHelperText>
                             </FormControl><br/>
+                            </div>
                             <FormHelperText className={this.state.loginErrorSpan}><span className="red">{this.state.loginError.message}</span></FormHelperText>
                             <br/><br/>
                             <Button variant="contained" color="primary" onClick={this.onLoginClick}>LOGIN</Button>
                         </TabContainer>}
                         {this.state.value ===1 &&
                         <TabContainer>
+                            <div className="form-fields">
                             <FormControl>
                                 <InputLabel htmlFor="firstName">First Name</InputLabel>
                                 <Input id="firstName" type="text" firstname={this.state.firstName} onChange={this.onChangeOfFirstName}/>
                                 <FormHelperText className={this.state.firstNameRequired}><span className="red">required</span></FormHelperText>
                             </FormControl>
-                            <br/><br/>
+                            <br/>
                             <FormControl>
                                 <InputLabel  htmlFor="lastName" >Last Name</InputLabel>
                                 <Input id="lastName" type="text" lastname={this.state.lastName} onChange={this.onChangeOfLastName}/>
                             </FormControl>
-                            <br/><br/>
+                            <br/>
                             <FormControl>
                                 <InputLabel htmlFor="email">Email</InputLabel>
                                 <Input id="email" type="email" email={this.state.email} onChange={this.onChangeOfEmail}/>
@@ -440,22 +523,23 @@ class Header extends Component{
                                     <span className="red">Invalid Email</span>
                                 </FormHelperText>
                             </FormControl>
-                            <br/><br/>
+                            <br/>
                             <FormControl>
                                 <InputLabel htmlFor="password">Password</InputLabel>
                                 <Input id="password" type="password" password={this.state.signUpPassword} onChange={this.onSignUpPasswordChange}/>
                                 <FormHelperText className={this.state.signUpPasswordRequired}><span className="red">required</span></FormHelperText>
                                 <FormHelperText className={this.state.signUpPasswordInvalid}><span className="red">Password must contain at least one capital letter, one small letter, one number, and one special character</span></FormHelperText>
                             </FormControl>
-                            <br/><br/>
+                            <br/>
                             <FormControl>
                                 <InputLabel htmlFor="contactno">Contact No.</InputLabel>
                                 <Input id="contactno" type="text" contactno={this.state.signUpContactno} onChange={this.onSignUpContactNumberChange}/>
                                 <FormHelperText className={this.state.signUpcontactnoRequired}><span className="red">required</span></FormHelperText>
                                 <FormHelperText className={this.state.signUpcontactInvalid}><span className="red">Contact No. must contain only numbers and must be 10 digits long</span></FormHelperText>
                             </FormControl><br/>
+                            </div>
                             <FormHelperText className={this.state.signUpErrorSpan} ><span className="red">{this.state.signUpError.message}</span></FormHelperText>
-                            <br/><br/>
+                            <br/>
 
                             <Button variant="contained" color="primary" onClick={this.onSignUpClick}>SIGNUP</Button>
                         </TabContainer>
@@ -467,4 +551,5 @@ class Header extends Component{
             );
         }
     }
-export default Header;
+
+export default (withMediaQuery() (Header));
