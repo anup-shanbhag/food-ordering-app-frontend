@@ -16,10 +16,10 @@ export default function DetailsCartCard(props) {
                 <CardContent className="cart-main">
                     <div className="cart-header">
                         <i>
-                            <Badge className="badge" badgeContent={props.cartItems.length} color="primary" showZero>
+                            <Badge className="badge" badgeContent={props.totalItems} color="primary" showZero>
                                 <ShoppingCartIcon/>
                             </Badge>
-                        </i>My Cart
+                        </i> <span className="cart-title">My Cart</span>
                     </div>
                     {
                         props.cartItems.length !== 0 ?
@@ -39,12 +39,13 @@ export default function DetailsCartCard(props) {
                             <Typography>TOTAL AMOUNT</Typography>
                         </Grid>
                         <Grid item xs={4} lg={4}/>
-                        <Grid item xs={2} lg={2}>
-                            <Typography><i className="fa fa-inr" aria-hidden="true"/> {props.totalAmount} </Typography>
+                        <Grid item xs={2} lg={2} className="amount">
+                            <Typography><i className="fa fa-inr" aria-hidden="true"/> {(props.totalAmount).toFixed(2)} </Typography>
                         </Grid>
                     </div>
                     <div className="cart-button">
-                        <Button variant="contained" color="primary" className="cButton">
+                        <Button variant="contained" color="primary" className="cButton"
+                                onClick={props.handleCheckoutClick}>
                             CHECKOUT
                         </Button>
                     </div>

@@ -93,6 +93,10 @@
     padding-right: 20px;
 }
 
+.cart-title {
+    font-size: x-large;
+}
+
 .cart-total {
     display: flex;
     margin: 10px auto auto;
@@ -104,6 +108,10 @@
 
 .badge {
     font-style: initial !important;
+}
+
+.badge span {
+    z-index: 0 !important;
 }
 
 .cart-item-main {
@@ -135,4 +143,8 @@
 .cart-button button {
     width: 100%;
     margin-top: 10px;
+}
+
+.amount {
+    text-align: end !important;
 }

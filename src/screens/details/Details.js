@@ -5,6 +5,7 @@ import './Details.css';
 import DetailsRCard from "../../common/details/DetailsRCard";
 import DetailsMenuCard from "../../common/details/DetailsMenuCard";
 import DetailsCartCard from "../../common/details/DetailsCartCard";
+import Notification from "../../common/notification/Notification";
 
 class Details extends Component {
     constructor() {
@@ -15,15 +16,22 @@ class Details extends Component {
             cartItems: [],
             totalAmount: 0,
             totalItems: 0,
+            notificationOpen: false,
         }
         this.handleAddMenuItem = this.handleAddMenuItem.bind(this);
         this.handleAddCartItem = this.handleAddCartItem.bind(this);
         this.handleRemoveCartItem = this.handleRemoveCartItem.bind(this);
+        this.handleCheckoutClick = this.handleCheckoutClick.bind(this);
+        this.closeNotification = this.closeNotification.bind(this);
+        this.msgItemAdded = "Item added to cart!";
+        this.msgItemIncreased = "Item added to cart!";
+        this.msgItemDecreased = "Item added to cart!";
     }
 
     handleAddMenuItem = (item) => this.addToCartHandler(item);
     handleAddCartItem = (item) => this.increaseCartItemHandler(item);
     handleRemoveCartItem = (item) => this.decreaseCartItemHandler(item);
+    handleCheckoutClick = (cartItems) => this.checkout(cartItems);
 
     componentDidMount() {
         this.getRestaurant();
@@ -32,6 +40,7 @@ class Details extends Component {
     render() {
         return (
             <div>
+                {"Ashik "+ this.state.loggedIn}
                 {this.state.loading === true ?
                     <Typography className="loading-spinner" variant="h4"
                                 color="textSecondary">loading...</Typography>
@@ -65,9 +74,15 @@ class Details extends Component {
                                                  totalAmount={this.state.totalAmount}
                                                  totalItems={this.state.totalItems}
                                                  handleAddCartItem={this.handleAddCartItem}
-                                                 handleRemoveCartItem={this.handleRemoveCartItem}/>
+                                                 handleRemoveCartItem={this.handleRemoveCartItem}
+                                                 handleCheckoutClick={this.handleCheckoutClick}/>
                             </div>
                         </div>
+                        {this.state.notificationOpen === true ?
+                            <Notification messageText={this.state.messageText} open={this.state.notificationOpen}
+                                          onClose={this.closeNotification}/>
+                            : ""
+                        }
                     </div>
                     : ""}
             </div>
@@ -95,6 +110,9 @@ class Details extends Component {
         });
     }
 
+    showNotification = (message) => this.setState({messageText: message, notificationOpen: true});
+    closeNotification = () => this.setState({messageText: null, notificationOpen: false});
+
     addToCartHandler = (item) => {
         let totalAmount = this.state.totalAmount;
         let totalItems = this.state.totalItems;
@@ -115,8 +133,6 @@ class Details extends Component {
             const updateItem = this.state.cartItems[index];
             updateItem.quantity = this.state.cartItems[index].quantity + 1;
             updateItem.price = this.state.cartItems[index].price + item.price;
-
-            this.setState({totalItems: totalItems});
         }
         else {
             this.setState({cartItem: newItem})
@@ -124,6 +140,8 @@ class Details extends Component {
             this.state.cartItems.push(this.state.cartItem);
         }
         this.setState({totalAmount: totalAmount})
+        this.setState({totalItems: totalItems});
+        this.showNotification(this.msgItemAdded);
     }
 
     increaseCartItemHandler = (item) => {
@@ -133,9 +151,14 @@ class Details extends Component {
         updateItem.price = this.state.cartItems[index].price + item.itemPrice;
         this.setState(item);
 
+
         let totalAmount = this.state.totalAmount;
+        let totalItems = this.state.totalItems;
         totalAmount += item.itemPrice;
+        totalItems += 1;
         this.setState({totalAmount: totalAmount})
+        this.setState({totalItems: totalItems});
+        this.showNotification(this.msgItemIncreased);
     }
 
     decreaseCartItemHandler = (item) => {
@@ -149,8 +172,16 @@ class Details extends Component {
             this.setState(item);
         }
         let totalAmount = this.state.totalAmount;
+        let totalItems = this.state.totalItems;
         totalAmount -= item.itemPrice;
+        totalItems -= 1;
         this.setState({totalAmount: totalAmount})
+        this.setState({totalItems: totalItems});
+        this.showNotification(this.msgItemDecreased);
+    }
+
+    checkout = (cartItems) => {
+        this.props.history.push("/checkout");
     }
 }
 

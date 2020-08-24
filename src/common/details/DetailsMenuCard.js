@@ -25,10 +25,10 @@ export default function DetailsMenuCard(props) {
                     <Grid item xs={6} lg={7}>
                         <Typography variant="body1" className="item-name"> {item.item_name} </Typography>
                     </Grid>
-                    <Grid item xs={1} lg={1}/>
-                    <Grid item xs={2} lg={1}>
+                    <Grid item xs={1} lg={0}/>
+                    <Grid item xs={2} lg={2}>
                         <Typography variant="body1"> <i className="fa fa-inr"
-                                                        aria-hidden="true"/> {item.price} </Typography>
+                                                        aria-hidden="true"/> {(item.price).toFixed(2)} </Typography>
                     </Grid>
                     <Grid item xs={1} lg={1}/>
                     <Grid item xs={1} lg={1}>

@@ -37,8 +37,8 @@ export default function DetailsCartItem(props) {
                 }
             </Grid>
             <Grid item xs={1} lg={1}/>
-            <Grid item xs={2} lg={2}>
-                <Typography variant="body1"> <i className="fa fa-inr" aria-hidden="true"/> {props.cartItem.price} </Typography>
+            <Grid item xs={2} lg={2} className="amount">
+                <Typography variant="body1"> <i className="fa fa-inr" aria-hidden="true"/> {(props.cartItem.price).toFixed(2)} </Typography>
             </Grid>
         </div>
     )
