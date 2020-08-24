@@ -141,7 +141,7 @@ class Header extends Component{
             signUpErrorSpan:'dispNone',
             loginError:{},
             loginErrorSpan:'dispNone',
-            loggedIn: sessionStorage.getItem("access-token") == null ? false : true,
+            loggedIn: sessionStorage.getItem("access-token") !== null,
         }
     }
 

@@ -60,6 +60,7 @@
 
 .item-name {
     text-transform: capitalize;
+    color: gray;
 }
 
 .item-add {
@@ -69,7 +70,7 @@
 
 .item-menu {
     display: flex;
-    padding: 10px 0;
+    padding: 5px 0;
     justify-content: right;
 }
 
@@ -93,9 +94,14 @@
     padding-right: 20px;
 }
 
+.cart-title {
+    font-size: x-large;
+}
+
 .cart-total {
     display: flex;
     margin: 10px auto auto;
+    color: gray;
 }
 
 .cart-total p {
@@ -104,6 +110,10 @@
 
 .badge {
     font-style: initial !important;
+}
+
+.badge span {
+    z-index: 0 !important;
 }
 
 .cart-item-main {
@@ -135,4 +145,8 @@
 .cart-button button {
     width: 100%;
     margin-top: 10px;
+}
+
+.amount {
+    text-align: end !important;
 }
