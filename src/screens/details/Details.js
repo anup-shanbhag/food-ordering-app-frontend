@@ -17,6 +17,7 @@ class Details extends Component {
             totalAmount: 0,
             totalItems: 0,
             notificationOpen: false,
+            loggedIn: sessionStorage.getItem("access-token") !== null,
         }
         this.handleAddMenuItem = this.handleAddMenuItem.bind(this);
         this.handleAddCartItem = this.handleAddCartItem.bind(this);
@@ -24,8 +25,11 @@ class Details extends Component {
         this.handleCheckoutClick = this.handleCheckoutClick.bind(this);
         this.closeNotification = this.closeNotification.bind(this);
         this.msgItemAdded = "Item added to cart!";
-        this.msgItemIncreased = "Item added to cart!";
-        this.msgItemDecreased = "Item added to cart!";
+        this.msgItemRemoved = "item removed from cart!"
+        this.msgItemIncreased = "Item quantity increased by 1!";
+        this.msgItemDecreased = "Item quantity decreased by 1!";
+        this.msgLoginNotOk = "Please login first!";
+        this.msgEmptyCart = "Please add an item to your cart!";
     }
 
     handleAddMenuItem = (item) => this.addToCartHandler(item);
@@ -40,7 +44,6 @@ class Details extends Component {
     render() {
         return (
             <div>
-                {"Ashik "+ this.state.loggedIn}
                 {this.state.loading === true ?
                     <Typography className="loading-spinner" variant="h4"
                                 color="textSecondary">loading...</Typography>
@@ -166,10 +169,12 @@ class Details extends Component {
         const updateItem = this.state.cartItems[index];
         if(updateItem.quantity === 1){
             this.state.cartItems.splice(index, 1);
+            this.showNotification(this.msgItemRemoved);
         }else if(updateItem.quantity > 1) {
             updateItem.quantity = this.state.cartItems[index].quantity - 1;
             updateItem.price = this.state.cartItems[index].price - item.itemPrice;
             this.setState(item);
+            this.showNotification(this.msgItemDecreased);
         }
         let totalAmount = this.state.totalAmount;
         let totalItems = this.state.totalItems;
@@ -177,11 +182,24 @@ class Details extends Component {
         totalItems -= 1;
         this.setState({totalAmount: totalAmount})
         this.setState({totalItems: totalItems});
-        this.showNotification(this.msgItemDecreased);
     }
 
     checkout = (cartItems) => {
-        this.props.history.push("/checkout");
+        if(this.state.cartItems.length === 0){
+            this.showNotification(this.msgEmptyCart);
+        }
+        else if(this.state.cartItems.length > 0 && sessionStorage.getItem("access-token") == null){
+            this.showNotification(this.msgLoginNotOk);
+        }
+        else {
+            this.props.history.push({
+                pathname: '/checkout/',
+                state: {
+                    orderItems: this.state.cartItems,
+                    totalAmount: this.state.totalAmount, restaurant: this.state.restaurant
+                }
+            });
+        }
     }
 }
 

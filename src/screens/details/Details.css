@@ -60,6 +60,7 @@
 
 .item-name {
     text-transform: capitalize;
+    color: gray;
 }
 
 .item-add {
@@ -69,7 +70,7 @@
 
 .item-menu {
     display: flex;
-    padding: 10px 0;
+    padding: 5px 0;
     justify-content: right;
 }
 
@@ -100,6 +101,7 @@
 .cart-total {
     display: flex;
     margin: 10px auto auto;
+    color: gray;
 }
 
 .cart-total p {
