@@ -30,6 +30,9 @@ import * as PropTypes from "prop-types";
 import './Header.css'
 import * as EmailVaildator from "email-validator";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import {Link} from 'react-router-dom';
+
+
 
 const theme = createMuiTheme({
     palette: {
@@ -64,7 +67,7 @@ const css  =  {
         textTransform:'unset',
         backgroundColor:'#263238',
         boxShadow: 'none',
-        color:'#ffffff',
+        color:'#e0e0e0',
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'start',
@@ -138,7 +141,7 @@ class Header extends Component{
             signUpErrorSpan:'dispNone',
             loginError:{},
             loginErrorSpan:'dispNone',
-            loggedIn: false,
+            loggedIn: sessionStorage.getItem("access-token") == null ? false : true,
         }
     }
 
@@ -287,6 +290,10 @@ class Header extends Component{
             })
 
         }
+    }
+
+    onCLickingMyProfile=()=>{
+        this.props.history.push("/profile/");
     }
 
     isFirstNameEmpty =(firstname) =>{
@@ -439,16 +446,17 @@ class Header extends Component{
                                                onChange={this.props.searchHandler}>
                                         </Input>
                                     </ThemeProvider>
-                                </Box> : null
+                                </Box>: null
                             }
+                            {this.props.isSmallScreen ? <br/> :null}
                             {
-                                this.state.loggedIn===false ?  <Button
+                                this.state.loggedIn===false ? <Button
                                 variant="contained"
                                 size="large"
                                 onClick={this.openModalHandler}
                                 startIcon={<Icon size="large"><AccountCircleIcon/></Icon>}
                                 style={css.loginButton}
-                            >Login</Button> :
+                                    ><Typography>Login</Typography></Button> :
                                <div style={css.userDiv}>
                                    <Button
                                    variant="contained"
@@ -456,7 +464,7 @@ class Header extends Component{
                                    onClick={this.openMenuHandler}
                                    startIcon={<Icon size="large"><AccountCircleIcon/></Icon>}
                                    style={css.user}
-                               >{sessionStorage.getItem('first-name')}</Button>
+                                   ><Typography>{sessionStorage.getItem('first-name')}</Typography></Button>
                                    <Menu className="menu-container"
                                          id="simple-menu"
                                          anchorEl={this.state.anchorEl}
@@ -465,11 +473,14 @@ class Header extends Component{
                                          onClose={this.handleMenuClose}
                                          style={{top: '40px'}}
                                    >
-                                       <MenuItem onClick={this.onCLickingMyProfile}>My Profile</MenuItem>
+                                       <MenuItem><Link
+                                           to={"/profile"} style={{textDecoration: 'none', color: 'black'}}>My
+                                           Profile</Link></MenuItem>
                                        <MenuItem onClick={this.logout}>Logout</MenuItem>
                                    </Menu>
                                </div>
                             }
+                            {this.props.isSmallScreen ? <br/> :null}
                         </Toolbar>
                     </AppBar>
                     <Modal ariaHideApp={false} isOpen={this.state.modalIsOpen}
