@@ -42,7 +42,7 @@ export default function SaveAddressForm(props) {
     const onStateChanged = (e) => setState(e.target.value);
     const onPincodeChanged = (e) => setPincode(e.target.value);
     const display = (field) => (isSaveClicked && (field === null || field === "")) ? classes.show : classes.hide;
-    const validate = (field) => (field && (field.length !== 6 || isNaN(field))) ? classes.show : classes.hide;
+    const validate = (field) => (isSaveClicked && field && (field.length !== 6 || isNaN(field))) ? classes.show : classes.hide;
     const reset = (isOK) => {
         if (isOK) {
             setFlatname("");
