@@ -37,16 +37,24 @@ const useStyles = (theme) => ({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    stepper: {
+        padding: "0%"
+    },
+    tab: {
+        maxWidth: "50%"
+    },
     workflowStepperContainer: {
-        width: '73%',
+        width: '72%',
+        padding: '1%'
     },
     workflowStepperContainerSm: {
         width: '90%',
         marginLeft: 'auto',
         marginRight: 'auto',
+        padding: '1%'
     },
     summaryCardContainer: {
-        width: '27%',
+        width: '28%',
     },
     summaryCardContainerSm: {
         width: '90%',
@@ -60,6 +68,7 @@ const withMediaQuery = () => Component => props => {
     const isSmallScreen = useMediaQuery('(max-width:650px)');
     return <Component isSmallScreen={isSmallScreen} {...props} />;
 };
+
 
 class Checkout extends React.Component {
     constructor(props) {
@@ -184,13 +193,14 @@ class Checkout extends React.Component {
     }
 
     getStepContent = (step) => {
+        const {classes} = this.props;
         switch (step) {
             case 0:
                 return (
                     <Box><AppBar position="static">
                         <Tabs value={this.state.activeTab} onChange={this.handleSwitch}>
-                            <Tab label="EXISTING ADDRESS"/>
-                            <Tab label="NEW ADDRESS"/>
+                            <Tab className={classes.tab} label="EXISTING ADDRESSES"/>
+                            <Tab className={classes.tab} label="NEW ADDRESS"/>
                         </Tabs>
                     </AppBar>
                         <Box display={this.state.activeTab === 0 ? "block" : "none"}>
@@ -248,7 +258,6 @@ class Checkout extends React.Component {
 
     render() {
         const {classes} = this.props;
-
         if (this.props.location.state && this.props.location.state.restaurant &&
             this.props.location.state.totalAmount &&
             this.props.location.state.orderItems) {
@@ -260,7 +269,8 @@ class Checkout extends React.Component {
                          width="100%" mt="1%">
                         <Box
                             className={(this.props.isSmallScreen) ? classes.workflowStepperContainerSm : classes.workflowStepperContainer}>
-                            <Stepper activeStep={this.state.activeStep} orientation="vertical">
+                            <Stepper className={classes.stepper} activeStep={this.state.activeStep}
+                                     orientation="vertical">
                                 {this.getSteps().map((label, index) => (
                                     <Step key={label}>
                                         <StepLabel>{label}</StepLabel>
@@ -290,7 +300,8 @@ class Checkout extends React.Component {
                         <Box
                             className={(this.props.isSmallScreen) ? classes.summaryCardContainerSm : classes.summaryCardContainer}
                             padding="1%">
-                            <OrderSummaryCard restaurantName={this.state.restaurantName} netAmount={this.state.netAmount}
+                            <OrderSummaryCard restaurantName={this.state.restaurantName}
+                                              netAmount={this.state.netAmount}
                                               orderItems={this.state.orderItems} order={this.state.order}
                                               handlePlaceOrder={this.placeNewOrder}/>
                         </Box>
@@ -299,9 +310,8 @@ class Checkout extends React.Component {
                                   onClose={this.closeNotification}/>
                 </Box>
             );
-        }
-        else{
-            return <Redirect to='/' />;
+        } else {
+            return <Redirect to='/'/>;
         }
 
 
