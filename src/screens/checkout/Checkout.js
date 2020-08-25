@@ -75,38 +75,10 @@ class Checkout extends React.Component {
             selectedAddressIndex: -1,
             selectedPaymentMethodId: null,
             selectedPaymentMethodIndex: -1,
-            order: {
-                "address_id": null,
-                "bill": 620.0,
-                "coupon_id": null,
-                "discount": 0,
-                "item_quantities": [
-                    {
-                        "item_id": "8c174b25-bb31-56a8-88b4-d06ffc9d5f89",
-                        "item_name": "Tea",
-                        "type": "VEG",
-                        "quantity": 2,
-                        "price": 40
-                    },
-                    {
-                        "item_id": "1dd86f90-a296-11e8-9a3a-720006ceb890",
-                        "item_name": "Paneer Chilly",
-                        "type": "VEG",
-                        "quantity": 2,
-                        "price": 280
-                    },
-                    {
-                        "item_id": "2ddf5546-ecd0-11e8-8eb2-f2801f1b9fd1",
-                        "item_name": "Chicken Roll",
-                        "type": "NON_VEG",
-                        "quantity": 2,
-                        "price": 300
-                    }
-                ],
-                "payment_id": null,
-                "restaurant_id": "2461973c-a238-11e8-9077-720006ceb890",
-                "restaurant_name": "Lion Heart"
-            }
+            order: null,
+            restaurantName: null,
+            orderItems: null,
+            netAmount: 0
         }
         this.handlePlaceOrder = this.handlePlaceOrder.bind(this);
         this.placeNewOrder = this.placeNewOrder.bind(this);
@@ -203,19 +175,13 @@ class Checkout extends React.Component {
             JSON.stringify(address)), callback, this.handleSaveAddress);
 
     placeNewOrder = () => {
-        delete this.state.order.restaurant_name;
-        delete this.state.order.discount;
-        delete this.state.order.coupon_id;
-        this.state.order.item_quantities.map(item => {
-            delete item.type;
-            delete item.item_name;
-        })
         this.state.order.address_id = this.state.selectedAddressId;
         this.state.order.payment_id = this.state.selectedPaymentMethodId;
         CallApi(GetEndpointURI('Save Order'),
             GetHttpHeaders('POST', "Bearer " + window.sessionStorage.getItem("access-token"),
                 JSON.stringify(this.state.order)), this.handlePlaceOrder);
     }
+
     getStepContent = (step) => {
         switch (step) {
             case 0:
@@ -245,11 +211,29 @@ class Checkout extends React.Component {
         }
     }
 
-
     componentDidMount() {
         this.getAvailableAddresses();
         this.getAvailableStates();
         this.getAvailablePaymentMethods();
+        let newOrder = {
+            address_id: null,
+            bill: this.props.location.state.totalAmount,
+            item_quantities: [],
+            payment_id: null,
+            restaurant_id: this.props.location.state.restaurant.id
+        };
+        this.props.location.state.orderItems && (this.props.location.state.orderItems.length > 0) &&
+        this.props.location.state.orderItems.map(orderItem => {
+            newOrder.item_quantities.push({
+                item_id: orderItem.id,
+                quantity: orderItem.quantity,
+                price: orderItem.price
+            });
+        });
+        this.setState({order: newOrder});
+        this.setState({restaurantName: this.props.location.state.restaurant.restaurant_name});
+        this.setState({netAmount: this.props.location.state.totalAmount});
+        this.setState({orderItems: JSON.parse(JSON.stringify(this.props.location.state.orderItems))});
     }
 
     render() {
@@ -292,7 +276,9 @@ class Checkout extends React.Component {
                     <Box
                         className={(this.props.isSmallScreen) ? classes.summaryCardContainerSm : classes.summaryCardContainer}
                         padding="1%">
-                        <OrderSummaryCard order={this.state.order} handlePlaceOrder={this.placeNewOrder}/>
+                        <OrderSummaryCard restaurantName={this.state.restaurantName} netAmount={this.state.netAmount}
+                                          orderItems={this.state.orderItems} order={this.state.order}
+                                          handlePlaceOrder={this.placeNewOrder}/>
                     </Box>
                 </Box>
                 <Notification messageText={this.state.messageText} open={this.state.notificationOpen}

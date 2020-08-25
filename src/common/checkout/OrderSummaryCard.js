@@ -11,7 +11,8 @@ import {
     Box
 } from '@material-ui/core';
 
-import OrderItem from "../order/OrderItem";
+//import OrderItem from "../order/OrderItem";
+import OrderItem from "../details/DetailsCartItem";
 import "font-awesome/css/font-awesome.css"
 
 export default function OrderSummaryCard(props) {
@@ -27,19 +28,16 @@ export default function OrderSummaryCard(props) {
                     </FormControl>
                     <FormControl fullWidth margin="dense" size="small" variant="standard">
                         <Typography className="restaurant-name" variant="body1" color="textPrimary" component="p">
-                            {props.order.restaurant_name}
+                            {props.restaurantName}
                         </Typography>
                     </FormControl>
                     <FormControl fullWidth margin="dense" size="small" variant="standard">
                         {
-                            (props.order.item_quantities.length > 0) &&
-                            props.order.item_quantities.map(item => (
-                                <OrderItem key={item.item_id}
-                                           nonVeg={item.type === "NON_VEG"}
-                                           name={item.item_name}
-                                           quantity={item.quantity}
-                                           price={item.price}/>
-                            ))
+                            props.orderItems && props.orderItems.length > 0 &&
+                                    props.orderItems.map( orderItem => (
+                                        <OrderItem key={orderItem.id}
+                                                   cartItem={orderItem} variant={"subtitle2"}/>
+                                        ))
                         }
                         <Typography variant="h3" gutterBottom/>
                     </FormControl>
@@ -49,7 +47,7 @@ export default function OrderSummaryCard(props) {
                             <Typography className="net-amount" variant="body2" color="textPrimary">
                                 Net Amount
                             </Typography>
-                            <Typography variant="body2"><i className="fa fa-inr"/> {Number(props.order.bill).toFixed(2)}
+                            <Typography variant="body2"><i className="fa fa-inr"/> {Number(props.netAmount).toFixed(2)}
                             </Typography>
                         </Box>
                     </FormControl>
