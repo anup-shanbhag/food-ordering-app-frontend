@@ -11,7 +11,6 @@ import {
     Box
 } from '@material-ui/core';
 
-//import OrderItem from "../order/OrderItem";
 import OrderItem from "../details/DetailsCartItem";
 import "font-awesome/css/font-awesome.css"
 
