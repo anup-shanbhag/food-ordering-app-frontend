@@ -18,6 +18,7 @@ import {
     withStyles
 } from '@material-ui/core/styles';
 
+import {Redirect} from "react-router-dom";
 import AddressesGrid from "../../common/checkout/AddressesGrid";
 import PaymentOptions from "../../common/checkout/PaymentOptions";
 import SaveAddressForm from "../../common/checkout/SaveAddressForm";
@@ -211,10 +212,7 @@ class Checkout extends React.Component {
         }
     }
 
-    componentDidMount() {
-        this.getAvailableAddresses();
-        this.getAvailableStates();
-        this.getAvailablePaymentMethods();
+    createOrder = () => {
         let newOrder = {
             address_id: null,
             bill: this.props.location.state.totalAmount,
@@ -234,57 +232,79 @@ class Checkout extends React.Component {
         this.setState({restaurantName: this.props.location.state.restaurant.restaurant_name});
         this.setState({netAmount: this.props.location.state.totalAmount});
         this.setState({orderItems: JSON.parse(JSON.stringify(this.props.location.state.orderItems))});
+
+    }
+
+    componentDidMount() {
+        if (this.props.location.state && this.props.location.state.restaurant &&
+            this.props.location.state.totalAmount &&
+            this.props.location.state.orderItems) {
+            this.createOrder();
+            this.getAvailableAddresses();
+            this.getAvailableStates();
+            this.getAvailablePaymentMethods();
+        }
     }
 
     render() {
         const {classes} = this.props;
-        return (
-            <Box>
-                <Header showSearch={false}/>
-                <Box display="flex"
-                     className={(this.props.isSmallScreen) ? classes.checkoutContainerSm : classes.checkoutContainer}
-                     width="100%" mt="1%">
-                    <Box
-                        className={(this.props.isSmallScreen) ? classes.workflowStepperContainerSm : classes.workflowStepperContainer}>
-                        <Stepper activeStep={this.state.activeStep} orientation="vertical">
-                            {this.getSteps().map((label, index) => (
-                                <Step key={label}>
-                                    <StepLabel>{label}</StepLabel>
-                                    <StepContent>
-                                        {this.getStepContent(index)}
-                                        <Typography variant="h2" gutterBottom/>
-                                        <Box>
-                                            <Button disabled={this.state.activeStep === 0}
-                                                    onClick={this.handleBack}>Back</Button>
-                                            <Button variant="contained" color="primary" onClick={this.handleNext}>
-                                                {this.state.activeStep === this.getSteps().length - 1 ? 'Finish' : 'Next'}
-                                            </Button>
-                                        </Box>
-                                    </StepContent>
-                                </Step>
-                            ))}
-                        </Stepper>
-                        {(this.state.activeStep === this.getSteps().length) ? (
-                            <Box padding="2%"><Typography variant="body1">View the summary and place your order
-                                now!</Typography>
-                                <Button onClick={this.handleReset}>
-                                    CHANGE
-                                </Button>
-                            </Box>) : ""
-                        }
+
+        if (this.props.location.state && this.props.location.state.restaurant &&
+            this.props.location.state.totalAmount &&
+            this.props.location.state.orderItems) {
+            return (
+                <Box>
+                    <Header showSearch={false}/>
+                    <Box display="flex"
+                         className={(this.props.isSmallScreen) ? classes.checkoutContainerSm : classes.checkoutContainer}
+                         width="100%" mt="1%">
+                        <Box
+                            className={(this.props.isSmallScreen) ? classes.workflowStepperContainerSm : classes.workflowStepperContainer}>
+                            <Stepper activeStep={this.state.activeStep} orientation="vertical">
+                                {this.getSteps().map((label, index) => (
+                                    <Step key={label}>
+                                        <StepLabel>{label}</StepLabel>
+                                        <StepContent>
+                                            {this.getStepContent(index)}
+                                            <Typography variant="h2" gutterBottom/>
+                                            <Box>
+                                                <Button disabled={this.state.activeStep === 0}
+                                                        onClick={this.handleBack}>Back</Button>
+                                                <Button variant="contained" color="primary" onClick={this.handleNext}>
+                                                    {this.state.activeStep === this.getSteps().length - 1 ? 'Finish' : 'Next'}
+                                                </Button>
+                                            </Box>
+                                        </StepContent>
+                                    </Step>
+                                ))}
+                            </Stepper>
+                            {(this.state.activeStep === this.getSteps().length) ? (
+                                <Box padding="2%"><Typography variant="body1">View the summary and place your order
+                                    now!</Typography>
+                                    <Button onClick={this.handleReset}>
+                                        CHANGE
+                                    </Button>
+                                </Box>) : ""
+                            }
+                        </Box>
+                        <Box
+                            className={(this.props.isSmallScreen) ? classes.summaryCardContainerSm : classes.summaryCardContainer}
+                            padding="1%">
+                            <OrderSummaryCard restaurantName={this.state.restaurantName} netAmount={this.state.netAmount}
+                                              orderItems={this.state.orderItems} order={this.state.order}
+                                              handlePlaceOrder={this.placeNewOrder}/>
+                        </Box>
                     </Box>
-                    <Box
-                        className={(this.props.isSmallScreen) ? classes.summaryCardContainerSm : classes.summaryCardContainer}
-                        padding="1%">
-                        <OrderSummaryCard restaurantName={this.state.restaurantName} netAmount={this.state.netAmount}
-                                          orderItems={this.state.orderItems} order={this.state.order}
-                                          handlePlaceOrder={this.placeNewOrder}/>
-                    </Box>
+                    <Notification messageText={this.state.messageText} open={this.state.notificationOpen}
+                                  onClose={this.closeNotification}/>
                 </Box>
-                <Notification messageText={this.state.messageText} open={this.state.notificationOpen}
-                              onClose={this.closeNotification}/>
-            </Box>
-        );
+            );
+        }
+        else{
+            return <Redirect to='/' />;
+        }
+
+
     }
 }
 
