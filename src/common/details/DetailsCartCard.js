@@ -37,8 +37,8 @@ export default function DetailsCartCard(props) {
                         <Grid item xs={6} lg={6}>
                             <Typography>TOTAL AMOUNT</Typography>
                         </Grid>
-                        <Grid item xs={4} lg={4}/>
-                        <Grid item xs={2} lg={2} className="amount">
+                        <Grid item xs={2} lg={3}/>
+                        <Grid item xs={4} lg={3} className="amount">
                             <Typography><i className="fa fa-inr" aria-hidden="true"/> {(props.totalAmount).toFixed(2)} </Typography>
                         </Grid>
                     </div>

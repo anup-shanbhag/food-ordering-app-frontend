@@ -5,18 +5,37 @@
     display: flex;
 }
 
+.rcard-mainSM {
+    padding: 25px;
+    background: #e7e7e7;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .rcard-left {
-    width: 20%;
+    flex: 25%;
+}
+
+.rcard-leftSM {
+    width: 100%;
 }
 
 .rcard-img {
-    width: 300px;
-    height: 250px;
+    min-width: 250px;
+    width: 100%;
+    height: 200px;
 }
 
 .rcard-right {
-    padding: 10px 80px;
-    width: 70%;
+    padding-left: 20px;
+    flex: 75%;
+}
+
+.rcard-rightSM {
+    margin: auto;
+    width: 100%;
+    text-align: center;
 }
 
 .upper-case {
@@ -28,18 +47,40 @@
 }
 
 .rcard-right-bottom {
+/*    display: flex;
+    justify-content: space-between;*/
     display: flex;
-    justify-content: space-between;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.rcard-right-bottom div{
+    width: 50%;
 }
 
 .section2 {
     display: flex;
     justify-content: space-between;
+    margin-left: 20px;
+    margin-right: 40px;
+}
+
+.section2SM {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: auto;
 }
 
 .item-section {
-    padding: 25px 50px;
+    padding: 25px;
     width: 40%;
+}
+
+.item-sectionSM {
+    padding: 25px;
+    flex: 100%;
 }
 
 .mcard-category {
@@ -60,7 +101,6 @@
 
 .item-name {
     text-transform: capitalize;
-    color: gray;
 }
 
 .item-add {
@@ -75,13 +115,22 @@
 }
 
 .cart-section {
-    padding: 25px 50px;
+    padding: 25px;
     width: 35%;
-    margin-right: 5%;
+}
+
+.cart-sectionM {
+    padding: 25px;
+    width: 45%;
+}
+
+.cart-sectionSM {
+    padding: 25px;
+    width: 100%;
 }
 
 .cart-main{
-    padding: 25px !important;
+/*    padding: 25px !important;*/
 }
 
 .cart-header{
@@ -114,32 +163,6 @@
 
 .badge span {
     z-index: 0 !important;
-}
-
-.cart-item-main {
-    display: flex;
-    padding: 5px 0;
-}
-
-.citem-add button:hover, .citem-remove button:hover {
-    background: #eacc5d;
-}
-
-.citem-add button, .citem-remove button {
-    font-size: small !important;
-    padding: 0 !important;
-}
-
-.citem-add {
-    text-align: start;
-}
-
-.citem-remove {
-    text-align: end;
-}
-
-.citem-quantity p{
-    text-align: center;
 }
 
 .cart-button button {

@@ -6,6 +6,13 @@ import DetailsRCard from "../../common/details/DetailsRCard";
 import DetailsMenuCard from "../../common/details/DetailsMenuCard";
 import DetailsCartCard from "../../common/details/DetailsCartCard";
 import Notification from "../../common/notification/Notification";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+
+const withMediaQuery = () => Component => props => {
+    const isSmallScreen = useMediaQuery('(max-width:700px)');
+    const isMediumScreen = useMediaQuery('(max-width:1000px)');
+    return <Component isSmallScreen={isSmallScreen} isMediumScreen={isMediumScreen} {...props} />;
+};
 
 class Details extends Component {
     constructor() {
@@ -35,7 +42,7 @@ class Details extends Component {
     handleAddMenuItem = (item) => this.addToCartHandler(item);
     handleAddCartItem = (item) => this.increaseCartItemHandler(item);
     handleRemoveCartItem = (item) => this.decreaseCartItemHandler(item);
-    handleCheckoutClick = (cartItems) => this.checkout(cartItems);
+    handleCheckoutClick = () => this.checkout();
 
     componentDidMount() {
         this.getRestaurant();
@@ -56,13 +63,12 @@ class Details extends Component {
 
                         {/*Restaurant Details section*/}
                         <div className="restaurant-section">
-                            <DetailsRCard restaurant={this.state.restaurant}/>
+                            <DetailsRCard restaurant={this.state.restaurant} isSmallScreen={this.props.isSmallScreen}/>
                         </div>
-
-                        <div className="section2">
+                        <div className={this.props.isSmallScreen ? "section2SM" : "section2" }>
 
                             {/*Restaurant Menu section*/}
-                            <div className="item-section">
+                            <div className={this.props.isSmallScreen ? "item-sectionSM" : "item-section"}>
                                 {this.state.restaurant.categories.map((category, index) => (
                                     <span key={category.id + "category"}>
                                         <DetailsMenuCard category={category} handleAddMenuItem={this.handleAddMenuItem}/>
@@ -72,7 +78,7 @@ class Details extends Component {
                             </div>
 
                             {/*Checkout Cart section*/}
-                            <div className="cart-section">
+                            <div className={this.props.isSmallScreen ? "cart-sectionSM" : (this.props.isMediumScreen ? "cart-sectionM" : "cart-section") }>
                                 <DetailsCartCard cartItems={this.state.cartItems}
                                                  totalAmount={this.state.totalAmount}
                                                  totalItems={this.state.totalItems}
@@ -184,7 +190,7 @@ class Details extends Component {
         this.setState({totalItems: totalItems});
     }
 
-    checkout = (cartItems) => {
+    checkout = () => {
         if(this.state.cartItems.length === 0){
             this.showNotification(this.msgEmptyCart);
         }
@@ -203,4 +209,4 @@ class Details extends Component {
     }
 }
 
-export default Details;
+export default (withMediaQuery() (Details));

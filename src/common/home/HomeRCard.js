@@ -11,7 +11,7 @@ export default function HomeRCard(props) {
 
     return (
             <Card>
-                <CardActionArea>
+                <CardActionArea className="restaurant-card">
                     <CardMedia
                         component="img"
                         alt={props.restaurant.restaurant_name}

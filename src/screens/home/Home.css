@@ -2,11 +2,26 @@
     display: flex;
     flex-wrap: wrap;
     margin: 30px auto;
+    justify-content: space-evenly;
 }
 
 .card-main {
-    width: 20%;
+/*    width: 100%;*/
     margin: 25px 25px;
+}
+
+.card-mainSM {
+    /*width: 100%;*/
+    margin: 25px 25px;
+}
+
+.noRestaurantMsg {
+    justify-content: start !important;
+}
+
+.restaurant-card {
+    width: 300px !important;
+    height: 340px ;
 }
 
 .card-section2 {
