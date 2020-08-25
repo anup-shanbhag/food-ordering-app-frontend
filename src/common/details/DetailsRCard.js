@@ -4,11 +4,11 @@ import Typography from "@material-ui/core/Typography";
 // Component for details restaurant section
 export default function DetailsRCard(props) {
     return (
-        <div className="rcard-main">
-            <div className="rcard-left">
+        <div className={props.isSmallScreen ? "rcard-mainSM" : "rcard-main"}>
+            <div className={props.isSmallScreen ? "rcard-leftSM" : "rcard-left"}>
                 <img src={props.restaurant.photo_URL} alt={props.restaurant.restaurant_name} className="rcard-img"/>
             </div>
-            <div className="rcard-right">
+            <div className={props.isSmallScreen ? "rcard-rightSM" : "rcard-right"}>
                 <Typography variant="h4" className="rcard-name">{props.restaurant.restaurant_name}</Typography>
                 <Typography variant="h6" className="rcard-locality upper-case">{props.restaurant.address.locality}</Typography>
                 <br/>
@@ -40,7 +40,7 @@ export default function DetailsRCard(props) {
                             Average Cost For <br/> Two People
                         </Typography>
                     </div>
-                    <div></div>
+
                 </div>
             </div>
         </div>

@@ -31,8 +31,14 @@ class Home extends Component {
                             <Typography className="loading-spinner" variant="h4" color="textSecondary">loading...</Typography>
                            : ""
                         }
-                        <div className="card-container">
-                            {this.state.restaurants.map(restaurant => (
+                        <div className= {this.state.restaurants.length === 0 ? "noRestaurantMsg" : "card-container"} >
+                            {
+                                this.state.restaurants.length === 0 && this.state.loading !== true ?
+                                    <Typography variant="h6">
+                                        No restaurant with the given name.
+                                    </Typography>
+                                    :
+                                this.state.restaurants.map(restaurant => (
                                 <Box key={restaurant.id} className="card-main" onClick={() => this.restaurantDetails(restaurant.id)}>
                                     <HomeRCard restaurant={restaurant}/>
                                 </Box>
