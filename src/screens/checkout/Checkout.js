@@ -81,24 +81,21 @@ class Checkout extends React.Component {
             paymentMethods: null,
             messageText: null,
             notificationOpen: false,
-            selectedAddressId: null,
-            selectedAddressIndex: -1,
-            selectedPaymentMethodId: null,
-            selectedPaymentMethodIndex: -1,
+            addressIndex: -1,
             order: null,
             restaurantName: null,
             orderItems: null,
             netAmount: 0
         }
-        this.handlePlaceOrder = this.handlePlaceOrder.bind(this);
-        this.placeNewOrder = this.placeNewOrder.bind(this);
+        this.handleOrderConfirmation = this.handleOrderConfirmation.bind(this);
+        this.placeOrder = this.placeOrder.bind(this);
         this.closeNotification = this.closeNotification.bind(this);
-        this.setSelectedAddressId = this.setSelectedAddressId.bind(this);
-        this.setSelectedPaymentModeId = this.setSelectedPaymentModeId.bind(this);
-        this.setAvailablePaymentMethods = this.setAvailablePaymentMethods.bind(this);
-        this.setAvailableStates = this.setAvailableStates.bind(this);
-        this.setAvailableAddresses = this.setAvailableAddresses.bind(this);
-        this.saveNewAddress = this.saveNewAddress.bind(this);
+        this.setAddressId = this.setAddressId.bind(this);
+        this.setPaymentMethodId = this.setPaymentMethodId.bind(this);
+        this.setPaymentMethods = this.setPaymentMethods.bind(this);
+        this.setStates = this.setStates.bind(this);
+        this.setAddresses = this.setAddresses.bind(this);
+        this.saveAddress = this.saveAddress.bind(this);
         this.msgSaveOrderNotOK = "Unable to place your order! Please try again!";
         this.msgSaveOrderOK = "Order placed successfully! Your order ID is $orderId.";
         this.msgSaveAddressNotOK = "Unable to save address! Please try again!";
@@ -109,9 +106,9 @@ class Checkout extends React.Component {
 
     getSteps = () => ['Delivery', 'Payment'];
     handleNext = () => {
-        if (this.state.activeStep === 0 && !this.state.selectedAddressId) {
+        if (this.state.activeStep === 0 && !this.state.order.address_id) {
             this.showNotification(this.msgAddressNotSelected);
-        } else if (this.state.activeStep === 1 && !this.state.selectedPaymentMethodId) {
+        } else if (this.state.activeStep === 1 && !this.state.order.payment_id) {
             this.showNotification(this.msgPaymentNotSelected);
         } else {
             this.setState({activeStep: this.state.activeStep + 1});
@@ -124,12 +121,12 @@ class Checkout extends React.Component {
         if (result) {
             this.setState({activeTab: 0});
             this.showNotification(this.msgSaveAddressOK);
-            this.getAvailableAddresses();
+            this.getAddresses();
         } else {
             this.showNotification(this.msgSaveAddressNotOK);
         }
     }
-    handlePlaceOrder = (result, response) => {
+    handleOrderConfirmation = (result, response) => {
         if (result) {
             this.showNotification(this.msgSaveOrderOK.replace("$orderId", response.id));
         } else {
@@ -138,15 +135,21 @@ class Checkout extends React.Component {
     }
     showNotification = (message) => this.setState({messageText: message, notificationOpen: true});
     closeNotification = () => this.setState({messageText: null, notificationOpen: false});
-    setSelectedAddressId = (id) => {
+    setAddressId = (id) => {
+        let order = JSON.parse(JSON.stringify(this.state.order));
+        order.address_id = id;
         this.setState({
-            selectedAddressId: id,
-            selectedAddressIndex: this.state.addresses.findIndex(address => address.id === id)
+            addressIndex: this.state.addresses.findIndex(address => address.id === id),
+            order: order
         });
     }
-    setSelectedPaymentModeId = (id) => this.setState({selectedPaymentMethodId: id});
+    setPaymentMethodId = (id) => {
+        let order = JSON.parse(JSON.stringify(this.state.order));
+        order.payment_id = id;
+        this.setState({ order: order });
+    }
 
-    setAvailableAddresses = (result, response) => {
+    setAddresses = (result, response) => {
         if (result) {
             this.setState({addresses: response.addresses});
         } else {
@@ -154,11 +157,11 @@ class Checkout extends React.Component {
         }
     }
 
-    getAvailableAddresses = () => CallApi(GetEndpointURI('Get Addresses'),
+    getAddresses = () => CallApi(GetEndpointURI('Get Addresses'),
         GetHttpHeaders('GET', "Bearer " + window.sessionStorage.getItem("access-token")),
-        this.setAvailableAddresses);
+        this.setAddresses);
 
-    setAvailableStates = (result, response) => {
+    setStates = (result, response) => {
         if (result) {
             this.setState({states: response.states});
         } else {
@@ -166,10 +169,10 @@ class Checkout extends React.Component {
         }
     }
 
-    getAvailableStates = () => CallApi(GetEndpointURI('Get States'),
-        GetHttpHeaders('GET'), this.setAvailableStates);
+    getStates = () => CallApi(GetEndpointURI('Get States'),
+        GetHttpHeaders('GET'), this.setStates);
 
-    setAvailablePaymentMethods = (result, response) => {
+    setPaymentMethods = (result, response) => {
         if (result) {
             this.setState({paymentMethods: response.paymentMethods});
         } else {
@@ -177,19 +180,17 @@ class Checkout extends React.Component {
         }
     }
 
-    getAvailablePaymentMethods = () => CallApi(GetEndpointURI('Get Payment Modes'),
-        GetHttpHeaders('GET'), this.setAvailablePaymentMethods);
+    getPaymentOptions = () => CallApi(GetEndpointURI('Get Payment Modes'),
+        GetHttpHeaders('GET'), this.setPaymentMethods);
 
-    saveNewAddress = (address, callback) => CallApi(GetEndpointURI('Save Address'),
+    saveAddress = (address, callback) => CallApi(GetEndpointURI('Save Address'),
         GetHttpHeaders('POST', "Bearer " + window.sessionStorage.getItem("access-token"),
             JSON.stringify(address)), callback, this.handleSaveAddress);
 
-    placeNewOrder = () => {
-        this.state.order.address_id = this.state.selectedAddressId;
-        this.state.order.payment_id = this.state.selectedPaymentMethodId;
+    placeOrder = () => {
         CallApi(GetEndpointURI('Save Order'),
             GetHttpHeaders('POST', "Bearer " + window.sessionStorage.getItem("access-token"),
-                JSON.stringify(this.state.order)), this.handlePlaceOrder);
+                JSON.stringify(this.state.order)), this.handleOrderConfirmation);
     }
 
     getStepContent = (step) => {
@@ -205,18 +206,18 @@ class Checkout extends React.Component {
                     </AppBar>
                         <Box display={this.state.activeTab === 0 ? "block" : "none"}>
                             <AddressesGrid addresses={this.state.addresses} cols={(this.props.isSmallScreen) ? 2 : 3}
-                                           setAddressId={this.setSelectedAddressId}
-                                           selectedIndex={this.state.selectedAddressIndex}/>
+                                           setAddressId={this.setAddressId}
+                                           selectedIndex={this.state.addressIndex}/>
                         </Box>
                         <Box display={this.state.activeTab === 1 ? "block" : "none"}>
-                            <SaveAddressForm states={this.state.states} handleSaveAddressOK={this.saveNewAddress}/>
+                            <SaveAddressForm states={this.state.states} handleSaveAddressOK={this.saveAddress}/>
                         </Box>
                     </Box>
                 );
             case 1:
                 return (<PaymentOptions paymentModes={this.state.paymentMethods}
-                                        setPaymentModeId={this.setSelectedPaymentModeId}
-                                        selectedPaymentMode={this.state.selectedPaymentMethodId}/>);
+                                        setPaymentModeId={this.setPaymentMethodId}
+                                        selectedPaymentMode={ (!this.state.order) ? null : this.state.order.payment_id}/>);
             default:
                 return 'Unknown step';
         }
@@ -231,13 +232,13 @@ class Checkout extends React.Component {
             restaurant_id: this.props.location.state.restaurant.id
         };
         this.props.location.state.orderItems && (this.props.location.state.orderItems.length > 0) &&
-        this.props.location.state.orderItems.map(orderItem => {
+        this.props.location.state.orderItems.map(orderItem =>
             newOrder.item_quantities.push({
                 item_id: orderItem.id,
                 quantity: orderItem.quantity,
                 price: orderItem.price
-            });
-        });
+            })
+        );
         this.setState({order: newOrder});
         this.setState({restaurantName: this.props.location.state.restaurant.restaurant_name});
         this.setState({netAmount: this.props.location.state.totalAmount});
@@ -250,9 +251,9 @@ class Checkout extends React.Component {
             this.props.location.state.totalAmount &&
             this.props.location.state.orderItems) {
             this.createOrder();
-            this.getAvailableAddresses();
-            this.getAvailableStates();
-            this.getAvailablePaymentMethods();
+            this.getAddresses();
+            this.getStates();
+            this.getPaymentOptions();
         }
     }
 
@@ -303,7 +304,7 @@ class Checkout extends React.Component {
                             <OrderSummaryCard restaurantName={this.state.restaurantName}
                                               netAmount={this.state.netAmount}
                                               orderItems={this.state.orderItems} order={this.state.order}
-                                              handlePlaceOrder={this.placeNewOrder}/>
+                                              handlePlaceOrder={this.placeOrder}/>
                         </Box>
                     </Box>
                     <Notification messageText={this.state.messageText} open={this.state.notificationOpen}
