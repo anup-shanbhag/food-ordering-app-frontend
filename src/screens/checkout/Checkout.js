@@ -18,6 +18,7 @@ import {
     withStyles
 } from '@material-ui/core/styles';
 
+import {Redirect} from "react-router-dom";
 import AddressesGrid from "../../common/checkout/AddressesGrid";
 import PaymentOptions from "../../common/checkout/PaymentOptions";
 import SaveAddressForm from "../../common/checkout/SaveAddressForm";
@@ -36,16 +37,24 @@ const useStyles = (theme) => ({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    stepper: {
+        padding: "0%"
+    },
+    tab: {
+        maxWidth: "50%"
+    },
     workflowStepperContainer: {
-        width: '73%',
+        width: '72%',
+        padding: '1%'
     },
     workflowStepperContainerSm: {
         width: '90%',
         marginLeft: 'auto',
         marginRight: 'auto',
+        padding: '1%'
     },
     summaryCardContainer: {
-        width: '27%',
+        width: '28%',
     },
     summaryCardContainerSm: {
         width: '90%',
@@ -60,6 +69,7 @@ const withMediaQuery = () => Component => props => {
     return <Component isSmallScreen={isSmallScreen} {...props} />;
 };
 
+
 class Checkout extends React.Component {
     constructor(props) {
         super(props);
@@ -71,52 +81,21 @@ class Checkout extends React.Component {
             paymentMethods: null,
             messageText: null,
             notificationOpen: false,
-            selectedAddressId: null,
-            selectedAddressIndex: -1,
-            selectedPaymentMethodId: null,
-            selectedPaymentMethodIndex: -1,
-            order: {
-                "address_id": null,
-                "bill": 620.0,
-                "coupon_id": null,
-                "discount": 0,
-                "item_quantities": [
-                    {
-                        "item_id": "8c174b25-bb31-56a8-88b4-d06ffc9d5f89",
-                        "item_name": "Tea",
-                        "type": "VEG",
-                        "quantity": 2,
-                        "price": 40
-                    },
-                    {
-                        "item_id": "1dd86f90-a296-11e8-9a3a-720006ceb890",
-                        "item_name": "Paneer Chilly",
-                        "type": "VEG",
-                        "quantity": 2,
-                        "price": 280
-                    },
-                    {
-                        "item_id": "2ddf5546-ecd0-11e8-8eb2-f2801f1b9fd1",
-                        "item_name": "Chicken Roll",
-                        "type": "NON_VEG",
-                        "quantity": 2,
-                        "price": 300
-                    }
-                ],
-                "payment_id": null,
-                "restaurant_id": "2461973c-a238-11e8-9077-720006ceb890",
-                "restaurant_name": "Lion Heart"
-            }
+            addressIndex: -1,
+            order: null,
+            restaurantName: null,
+            orderItems: null,
+            netAmount: 0
         }
-        this.handlePlaceOrder = this.handlePlaceOrder.bind(this);
-        this.placeNewOrder = this.placeNewOrder.bind(this);
+        this.handleOrderConfirmation = this.handleOrderConfirmation.bind(this);
+        this.placeOrder = this.placeOrder.bind(this);
         this.closeNotification = this.closeNotification.bind(this);
-        this.setSelectedAddressId = this.setSelectedAddressId.bind(this);
-        this.setSelectedPaymentModeId = this.setSelectedPaymentModeId.bind(this);
-        this.setAvailablePaymentMethods = this.setAvailablePaymentMethods.bind(this);
-        this.setAvailableStates = this.setAvailableStates.bind(this);
-        this.setAvailableAddresses = this.setAvailableAddresses.bind(this);
-        this.saveNewAddress = this.saveNewAddress.bind(this);
+        this.setAddressId = this.setAddressId.bind(this);
+        this.setPaymentMethodId = this.setPaymentMethodId.bind(this);
+        this.setPaymentMethods = this.setPaymentMethods.bind(this);
+        this.setStates = this.setStates.bind(this);
+        this.setAddresses = this.setAddresses.bind(this);
+        this.saveAddress = this.saveAddress.bind(this);
         this.msgSaveOrderNotOK = "Unable to place your order! Please try again!";
         this.msgSaveOrderOK = "Order placed successfully! Your order ID is $orderId.";
         this.msgSaveAddressNotOK = "Unable to save address! Please try again!";
@@ -127,9 +106,9 @@ class Checkout extends React.Component {
 
     getSteps = () => ['Delivery', 'Payment'];
     handleNext = () => {
-        if (this.state.activeStep === 0 && !this.state.selectedAddressId) {
+        if (this.state.activeStep === 0 && !this.state.order.address_id) {
             this.showNotification(this.msgAddressNotSelected);
-        } else if (this.state.activeStep === 1 && !this.state.selectedPaymentMethodId) {
+        } else if (this.state.activeStep === 1 && !this.state.order.payment_id) {
             this.showNotification(this.msgPaymentNotSelected);
         } else {
             this.setState({activeStep: this.state.activeStep + 1});
@@ -142,12 +121,12 @@ class Checkout extends React.Component {
         if (result) {
             this.setState({activeTab: 0});
             this.showNotification(this.msgSaveAddressOK);
-            this.getAvailableAddresses();
+            this.getAddresses();
         } else {
             this.showNotification(this.msgSaveAddressNotOK);
         }
     }
-    handlePlaceOrder = (result, response) => {
+    handleOrderConfirmation = (result, response) => {
         if (result) {
             this.showNotification(this.msgSaveOrderOK.replace("$orderId", response.id));
         } else {
@@ -156,15 +135,21 @@ class Checkout extends React.Component {
     }
     showNotification = (message) => this.setState({messageText: message, notificationOpen: true});
     closeNotification = () => this.setState({messageText: null, notificationOpen: false});
-    setSelectedAddressId = (id) => {
+    setAddressId = (id) => {
+        let order = JSON.parse(JSON.stringify(this.state.order));
+        order.address_id = id;
         this.setState({
-            selectedAddressId: id,
-            selectedAddressIndex: this.state.addresses.findIndex(address => address.id === id)
+            addressIndex: this.state.addresses.findIndex(address => address.id === id),
+            order: order
         });
     }
-    setSelectedPaymentModeId = (id) => this.setState({selectedPaymentMethodId: id});
+    setPaymentMethodId = (id) => {
+        let order = JSON.parse(JSON.stringify(this.state.order));
+        order.payment_id = id;
+        this.setState({ order: order });
+    }
 
-    setAvailableAddresses = (result, response) => {
+    setAddresses = (result, response) => {
         if (result) {
             this.setState({addresses: response.addresses});
         } else {
@@ -172,11 +157,11 @@ class Checkout extends React.Component {
         }
     }
 
-    getAvailableAddresses = () => CallApi(GetEndpointURI('Get Addresses'),
+    getAddresses = () => CallApi(GetEndpointURI('Get Addresses'),
         GetHttpHeaders('GET', "Bearer " + window.sessionStorage.getItem("access-token")),
-        this.setAvailableAddresses);
+        this.setAddresses);
 
-    setAvailableStates = (result, response) => {
+    setStates = (result, response) => {
         if (result) {
             this.setState({states: response.states});
         } else {
@@ -184,10 +169,10 @@ class Checkout extends React.Component {
         }
     }
 
-    getAvailableStates = () => CallApi(GetEndpointURI('Get States'),
-        GetHttpHeaders('GET'), this.setAvailableStates);
+    getStates = () => CallApi(GetEndpointURI('Get States'),
+        GetHttpHeaders('GET'), this.setStates);
 
-    setAvailablePaymentMethods = (result, response) => {
+    setPaymentMethods = (result, response) => {
         if (result) {
             this.setState({paymentMethods: response.paymentMethods});
         } else {
@@ -195,110 +180,142 @@ class Checkout extends React.Component {
         }
     }
 
-    getAvailablePaymentMethods = () => CallApi(GetEndpointURI('Get Payment Modes'),
-        GetHttpHeaders('GET'), this.setAvailablePaymentMethods);
+    getPaymentOptions = () => CallApi(GetEndpointURI('Get Payment Modes'),
+        GetHttpHeaders('GET'), this.setPaymentMethods);
 
-    saveNewAddress = (address, callback) => CallApi(GetEndpointURI('Save Address'),
+    saveAddress = (address, callback) => CallApi(GetEndpointURI('Save Address'),
         GetHttpHeaders('POST', "Bearer " + window.sessionStorage.getItem("access-token"),
             JSON.stringify(address)), callback, this.handleSaveAddress);
 
-    placeNewOrder = () => {
-        delete this.state.order.restaurant_name;
-        delete this.state.order.discount;
-        delete this.state.order.coupon_id;
-        this.state.order.item_quantities.map(item => {
-            delete item.type;
-            delete item.item_name;
-        })
-        this.state.order.address_id = this.state.selectedAddressId;
-        this.state.order.payment_id = this.state.selectedPaymentMethodId;
+    placeOrder = () => {
         CallApi(GetEndpointURI('Save Order'),
             GetHttpHeaders('POST', "Bearer " + window.sessionStorage.getItem("access-token"),
-                JSON.stringify(this.state.order)), this.handlePlaceOrder);
+                JSON.stringify(this.state.order)), this.handleOrderConfirmation);
     }
+
     getStepContent = (step) => {
+        const {classes} = this.props;
         switch (step) {
             case 0:
                 return (
                     <Box><AppBar position="static">
                         <Tabs value={this.state.activeTab} onChange={this.handleSwitch}>
-                            <Tab label="EXISTING ADDRESS"/>
-                            <Tab label="NEW ADDRESS"/>
+                            <Tab className={classes.tab} label="EXISTING ADDRESSES"/>
+                            <Tab className={classes.tab} label="NEW ADDRESS"/>
                         </Tabs>
                     </AppBar>
                         <Box display={this.state.activeTab === 0 ? "block" : "none"}>
                             <AddressesGrid addresses={this.state.addresses} cols={(this.props.isSmallScreen) ? 2 : 3}
-                                           setAddressId={this.setSelectedAddressId}
-                                           selectedIndex={this.state.selectedAddressIndex}/>
+                                           setAddressId={this.setAddressId}
+                                           selectedIndex={this.state.addressIndex}/>
                         </Box>
                         <Box display={this.state.activeTab === 1 ? "block" : "none"}>
-                            <SaveAddressForm states={this.state.states} handleSaveAddressOK={this.saveNewAddress}/>
+                            <SaveAddressForm states={this.state.states} handleSaveAddressOK={this.saveAddress}/>
                         </Box>
                     </Box>
                 );
             case 1:
                 return (<PaymentOptions paymentModes={this.state.paymentMethods}
-                                        setPaymentModeId={this.setSelectedPaymentModeId}
-                                        selectedPaymentMode={this.state.selectedPaymentMethodId}/>);
+                                        setPaymentModeId={this.setPaymentMethodId}
+                                        selectedPaymentMode={ (!this.state.order) ? null : this.state.order.payment_id}/>);
             default:
                 return 'Unknown step';
         }
     }
 
+    createOrder = () => {
+        let newOrder = {
+            address_id: null,
+            bill: this.props.location.state.totalAmount,
+            item_quantities: [],
+            payment_id: null,
+            restaurant_id: this.props.location.state.restaurant.id
+        };
+        this.props.location.state.orderItems && (this.props.location.state.orderItems.length > 0) &&
+        this.props.location.state.orderItems.map(orderItem =>
+            newOrder.item_quantities.push({
+                item_id: orderItem.id,
+                quantity: orderItem.quantity,
+                price: orderItem.price
+            })
+        );
+        this.setState({order: newOrder});
+        this.setState({restaurantName: this.props.location.state.restaurant.restaurant_name});
+        this.setState({netAmount: this.props.location.state.totalAmount});
+        this.setState({orderItems: JSON.parse(JSON.stringify(this.props.location.state.orderItems))});
+
+    }
 
     componentDidMount() {
-        this.getAvailableAddresses();
-        this.getAvailableStates();
-        this.getAvailablePaymentMethods();
+        if (this.props.location.state && this.props.location.state.restaurant &&
+            this.props.location.state.totalAmount &&
+            this.props.location.state.orderItems) {
+            this.createOrder();
+            this.getAddresses();
+            this.getStates();
+            this.getPaymentOptions();
+        }
     }
 
     render() {
         const {classes} = this.props;
-        return (
-            <Box>
-                <Header showSearch={false}/>
-                <Box display="flex"
-                     className={(this.props.isSmallScreen) ? classes.checkoutContainerSm : classes.checkoutContainer}
-                     width="100%" mt="1%">
-                    <Box
-                        className={(this.props.isSmallScreen) ? classes.workflowStepperContainerSm : classes.workflowStepperContainer}>
-                        <Stepper activeStep={this.state.activeStep} orientation="vertical">
-                            {this.getSteps().map((label, index) => (
-                                <Step key={label}>
-                                    <StepLabel>{label}</StepLabel>
-                                    <StepContent>
-                                        {this.getStepContent(index)}
-                                        <Typography variant="h2" gutterBottom/>
-                                        <Box>
-                                            <Button disabled={this.state.activeStep === 0}
-                                                    onClick={this.handleBack}>Back</Button>
-                                            <Button variant="contained" color="primary" onClick={this.handleNext}>
-                                                {this.state.activeStep === this.getSteps().length - 1 ? 'Finish' : 'Next'}
-                                            </Button>
-                                        </Box>
-                                    </StepContent>
-                                </Step>
-                            ))}
-                        </Stepper>
-                        {(this.state.activeStep === this.getSteps().length) ? (
-                            <Box padding="2%"><Typography variant="body1">View the summary and place your order
-                                now!</Typography>
-                                <Button onClick={this.handleReset}>
-                                    CHANGE
-                                </Button>
-                            </Box>) : ""
-                        }
+        if (this.props.location.state && this.props.location.state.restaurant &&
+            this.props.location.state.totalAmount &&
+            this.props.location.state.orderItems) {
+            return (
+                <Box>
+                    <Header showSearch={false}/>
+                    <Box display="flex"
+                         className={(this.props.isSmallScreen) ? classes.checkoutContainerSm : classes.checkoutContainer}
+                         width="100%" mt="1%">
+                        <Box
+                            className={(this.props.isSmallScreen) ? classes.workflowStepperContainerSm : classes.workflowStepperContainer}>
+                            <Stepper className={classes.stepper} activeStep={this.state.activeStep}
+                                     orientation="vertical">
+                                {this.getSteps().map((label, index) => (
+                                    <Step key={label}>
+                                        <StepLabel>{label}</StepLabel>
+                                        <StepContent>
+                                            {this.getStepContent(index)}
+                                            <Typography variant="h2" gutterBottom/>
+                                            <Box>
+                                                <Button disabled={this.state.activeStep === 0}
+                                                        onClick={this.handleBack}>Back</Button>
+                                                <Button variant="contained" color="primary" onClick={this.handleNext}>
+                                                    {this.state.activeStep === this.getSteps().length - 1 ? 'Finish' : 'Next'}
+                                                </Button>
+                                            </Box>
+                                        </StepContent>
+                                    </Step>
+                                ))}
+                            </Stepper>
+                            {(this.state.activeStep === this.getSteps().length) ? (
+                                <Box padding="2%"><Typography variant="body1">View the summary and place your order
+                                    now!</Typography>
+                                    <Button onClick={this.handleReset}>
+                                        CHANGE
+                                    </Button>
+                                </Box>) : ""
+                            }
+                        </Box>
+                        <Box
+                            className={(this.props.isSmallScreen) ? classes.summaryCardContainerSm : classes.summaryCardContainer}
+                            padding="1%">
+                            <OrderSummaryCard restaurantName={this.state.restaurantName}
+                                              netAmount={this.state.netAmount}
+                                              orderItems={this.state.orderItems} order={this.state.order}
+                                              handlePlaceOrder={this.placeOrder}/>
+                        </Box>
                     </Box>
-                    <Box
-                        className={(this.props.isSmallScreen) ? classes.summaryCardContainerSm : classes.summaryCardContainer}
-                        padding="1%">
-                        <OrderSummaryCard order={this.state.order} handlePlaceOrder={this.placeNewOrder}/>
-                    </Box>
+                    <Notification messageText={this.state.messageText} open={this.state.notificationOpen}
+                                  onClose={this.closeNotification}/>
                 </Box>
-                <Notification messageText={this.state.messageText} open={this.state.notificationOpen}
-                              onClose={this.closeNotification}/>
-            </Box>
-        );
+            );
+        } else {
+            return <Redirect to='/'/>;
+        }
+
+
     }
 }
 
