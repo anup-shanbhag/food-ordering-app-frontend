@@ -71,7 +71,10 @@ class Details extends Component {
                             <div className={this.props.isSmallScreen ? "item-sectionSM" : "item-section"}>
                                 {this.state.restaurant.categories.map((category, index) => (
                                     <span key={category.id + "category"}>
-                                        <DetailsMenuCard category={category} handleAddMenuItem={this.handleAddMenuItem}/>
+                                        <DetailsMenuCard category={category}
+                                                         handleAddMenuItem={this.handleAddMenuItem}
+                                                         isSmallScreen={this.props.isSmallScreen}
+                                                         isMediumScreen={this.props.isMediumScreen}/>
                                     </span>
                                 ))
                                 }
@@ -84,7 +87,9 @@ class Details extends Component {
                                                  totalItems={this.state.totalItems}
                                                  handleAddCartItem={this.handleAddCartItem}
                                                  handleRemoveCartItem={this.handleRemoveCartItem}
-                                                 handleCheckoutClick={this.handleCheckoutClick}/>
+                                                 handleCheckoutClick={this.handleCheckoutClick}
+                                                 isSmallScreen={this.props.isSmallScreen}
+                                                 isMediumScreen={this.props.isMediumScreen}/>
                             </div>
                         </div>
                         {this.state.notificationOpen === true ?

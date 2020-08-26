@@ -5,6 +5,16 @@ import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Header from "../../common/header/Header";
 import "../../../node_modules/font-awesome/css/font-awesome.css"
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+
+console.log(window.innerHeight);
+const withMediaQuery = () => Component => props => {
+    const isXtraSmallScreen = useMediaQuery('(max-width:650px)');
+    const isSmallScreen = useMediaQuery('(max-width:1000px)');
+    const isMediumScreen = useMediaQuery('(max-width:1350px)');
+    return <Component isSmallScreen={isSmallScreen} isMediumScreen={isMediumScreen}
+                      isXtraSmallScreen={isXtraSmallScreen} {...props} />;
+};
 
 class Home extends Component {
 
@@ -26,23 +36,28 @@ class Home extends Component {
             <div>
                 {this.mounted === true ?
                     <div>
-                        <Header searchHandler={this.searchHandler} showSearch={true} />
+                        <Header searchHandler={this.searchHandler} showSearch={true}/>
                         {this.state.loading === true ?
-                            <Typography className="loading-spinner" variant="h4" color="textSecondary">loading...</Typography>
-                           : ""
+                            <Typography className="loading-spinner" variant="h4"
+                                        color="textSecondary">loading...</Typography>
+                            : ""
                         }
-                        <div className= {this.state.restaurants.length === 0 ? "noRestaurantMsg" : "card-container"} >
+                        <div className={this.state.restaurants.length === 0 ? "noRestaurantMsg" : "card-container"}>
                             {
                                 this.state.restaurants.length === 0 && this.state.loading !== true ?
                                     <Typography variant="h6">
                                         No restaurant with the given name.
                                     </Typography>
                                     :
-                                this.state.restaurants.map(restaurant => (
-                                <Box key={restaurant.id} className="card-main" onClick={() => this.restaurantDetails(restaurant.id)}>
-                                    <HomeRCard restaurant={restaurant}/>
-                                </Box>
-                            ))}
+                                    this.state.restaurants.map(restaurant => (
+                                        <Box key={restaurant.id}
+                                             className={this.props.isXtraSmallScreen ? "card-mainXSM" :
+                                                 (this.props.isSmallScreen ? "card-mainSM" :
+                                                     (this.props.isMediumScreen ? "card-mainM" : "card-main"))}
+                                             onClick={() => this.restaurantDetails(restaurant.id)}>
+                                            <HomeRCard restaurant={restaurant}/>
+                                        </Box>
+                                    ))}
                         </div>
                     </div>
                     : ""}
@@ -55,7 +70,7 @@ class Home extends Component {
         const headers = {'Accept': 'application/json'}
         let that = this;
         let url = "http://localhost:8080/api/restaurant";
-        that.setState({loading:true})
+        that.setState({loading: true})
         return fetch(url,
             {method: 'GET', headers}
         ).then((response) => {
@@ -71,18 +86,17 @@ class Home extends Component {
     }
 
     restaurantDetails = (restaurantId) => {
-        this.props.history.push("/restaurant/"+restaurantId);
+        this.props.history.push("/restaurant/" + restaurantId);
     }
 
     searchHandler = (event) => {
         let that = this;
         const headers = {'Accept': 'application/json'}
-        let url =  'http://localhost:8080/api/restaurant/name/' + event.target.value;
-        that.setState({loading:true})
-        if(event.target.value===""){
+        let url = 'http://localhost:8080/api/restaurant/name/' + event.target.value;
+        that.setState({loading: true})
+        if (event.target.value === "") {
             this.getRestaurants();
-        }
-        else {
+        } else {
             return fetch(url,
                 {method: 'GET', headers}
             ).then((response) => {
@@ -99,4 +113,4 @@ class Home extends Component {
     }
 }
 
-export default Home;
+export default (withMediaQuery() (Home));
