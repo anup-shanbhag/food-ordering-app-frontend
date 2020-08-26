@@ -7,6 +7,8 @@ import Grid from "@material-ui/core/Grid";
 
 // Component for details restaurant menu section
 export default function DetailsMenuCard(props) {
+    let variant = props.isSmallScreen ? "subtitle2" : (props.isMediumScreen ? "subtitle1" : "body1") ;
+
     return (
         <div className="mcard-main">
             <Typography variant="button" color="textSecondary"
@@ -23,11 +25,11 @@ export default function DetailsMenuCard(props) {
                         </Typography>
                     </Grid>
                     <Grid item xs={6} lg={7}>
-                        <Typography variant="body1" className="item-name"> {item.item_name} </Typography>
+                        <Typography variant={variant} className="item-name"> {item.item_name} </Typography>
                     </Grid>
                     <Grid item lg={1}/>
                     <Grid item xs={3} lg={2}>
-                        <Typography variant="body1"> <i className="fa fa-inr"
+                        <Typography variant={variant}> <i className="fa fa-inr"
                                                         aria-hidden="true"/> {(item.price).toFixed(2)} </Typography>
                     </Grid>
                     <Grid item xs={1} lg={1}/>

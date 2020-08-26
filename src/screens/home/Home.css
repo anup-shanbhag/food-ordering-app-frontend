@@ -2,26 +2,37 @@
     display: flex;
     flex-wrap: wrap;
     margin: 30px auto;
-    justify-content: space-evenly;
+    justify-content: flex-start;
 }
 
 .card-main {
-/*    width: 100%;*/
-    margin: 25px 25px;
+    width: 22%;
+    margin: 10px;
+}
+
+.card-mainM {
+    width: 30%;
+    margin: 10px;
 }
 
 .card-mainSM {
-    /*width: 100%;*/
-    margin: 25px 25px;
+    width: 45%;
+    margin: 10px;
+}
+
+.card-mainXSM {
+    width: 100%;
+    margin: 10px;
 }
 
 .noRestaurantMsg {
     justify-content: start !important;
 }
 
-.restaurant-card {
-    width: 300px !important;
+.restaurant-card, .restaurant-card-main {
+    max-width: 300px !important;
     height: 340px ;
+    margin: auto;
 }
 
 .card-section2 {

@@ -29,6 +29,7 @@ const useStyles = makeStyles({
         textAlign: 'end !important'
     },
     addRemoveIcon:{
+        justifyContent: 'center',
             display: 'flex',
         flexDirection: 'row',
         '& button': {
@@ -44,14 +45,14 @@ const useStyles = makeStyles({
     }
 });
 
-export default function DetailsCartItem(props) {
+export default function CartItem(props) {
 
     const classes = useStyles();
 
     return(
         <div className={classes.cartItemMain}>
             <Grid item xs={1} lg={1}>
-                <Typography>
+                <Typography variant={props.variant}>
                     {props.cartItem.type === "VEG" ?
                     <i className={classes.itemVeg + " fa fa-stop-circle-o"} aria-hidden="true"/>
                         : <i className={classes.itemNonveg + " fa fa-stop-circle-o"} aria-hidden="true"/>
@@ -59,25 +60,25 @@ export default function DetailsCartItem(props) {
                 </Typography>
             </Grid>
             <Grid item xs={4} lg={6}>
-                <Typography variant="body1" className={classes.itemName}> {props.cartItem.name} </Typography>
+                <Typography variant={props.variant} className={classes.itemName}> {props.cartItem.name} </Typography>
             </Grid>
             <Grid item xs={3} lg={2} className={classes.citemQuantity}>
                 <div className={classes.addRemoveIcon}>
                     {
                         (props.editable) &&
-                        <IconButton value={props.cartItem}
+                        <IconButton size='small' value={props.cartItem}
                                     onClick={props.handleRemoveCartItem.bind(this, props.cartItem)}> <RemoveIcon/> </IconButton>
                     }
-                    <Typography> {props.cartItem.quantity} </Typography>
+                    <Typography variant={props.variant}> {props.cartItem.quantity} </Typography>
                     {
                         (props.editable) &&
-                        <IconButton value={props.cartItem}
+                        <IconButton size='small' value={props.cartItem}
                                     onClick={props.handleAddCartItem.bind(this, props.cartItem)}> <AddIcon/> </IconButton>
                     }
                 </div>
             </Grid>
             <Grid item xs={4} lg={3} className={classes.amount}>
-                <Typography variant="body1"> <i className="fa fa-inr" aria-hidden="true"/> {(props.cartItem.price).toFixed(2)} </Typography>
+                <Typography variant={props.variant}> <i className="fa fa-inr" aria-hidden="true"/> {(props.cartItem.price).toFixed(2)} </Typography>
             </Grid>
         </div>
     )

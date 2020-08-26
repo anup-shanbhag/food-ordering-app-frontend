@@ -11,7 +11,7 @@ import {
     Box
 } from '@material-ui/core';
 
-import OrderItem from "../details/DetailsCartItem";
+import OrderItem from "../order/CartItem";
 import "font-awesome/css/font-awesome.css"
 
 export default function OrderSummaryCard(props) {

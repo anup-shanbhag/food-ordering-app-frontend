@@ -4,11 +4,12 @@ import CardContent from "@material-ui/core/CardContent";
 import Badge from "@material-ui/core/Badge";
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import Typography from "@material-ui/core/Typography";
-import DetailsCartItem from "./DetailsCartItem";
+import CartItem from "../order/CartItem";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 
 export default function DetailsCartCard(props) {
+    let variant = props.isSmallScreen ? "subtitle2" : (props.isMediumScreen ? "subtitle1" : "body1") ;
     return(
         <div>
             <Card>
@@ -25,9 +26,10 @@ export default function DetailsCartCard(props) {
                         <span>
                             {props.cartItems.map(cartItem =>
                                 <span key={cartItem.id}>
-                                    <DetailsCartItem cartItem={cartItem} handleAddCartItem={props.handleAddCartItem}
-                                                     handleRemoveCartItem={props.handleRemoveCartItem}
-                                                     editable={true}/>
+                                    <CartItem cartItem={cartItem} handleAddCartItem={props.handleAddCartItem}
+                                              handleRemoveCartItem={props.handleRemoveCartItem}
+                                              editable={true}
+                                              variant={variant}/>
                                 </span>
                             )}
                         </span>

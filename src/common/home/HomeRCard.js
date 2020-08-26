@@ -10,7 +10,7 @@ import "font-awesome/css/font-awesome.css"
 export default function HomeRCard(props) {
 
     return (
-            <Card>
+            <Card className="restaurant-card-main">
                 <CardActionArea className="restaurant-card">
                     <CardMedia
                         component="img"
