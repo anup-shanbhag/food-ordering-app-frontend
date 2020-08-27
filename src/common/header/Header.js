@@ -149,6 +149,7 @@ class Header extends Component{
 
         }
         this.loggedinMessage ="Logged in successfully!";
+        this.signedUpMessage="Registered successfully! Please login now!";
         this.closeNotification = this.closeNotification.bind(this);
     }
 
@@ -288,6 +289,7 @@ class Header extends Component{
                     that.setState({signUpErrorSpan:'dispNone'})
                     that.setState({signUpError:{}})
                     that.setState({value:0});
+                    that.showNotification(that.signedUpMessage);
                     return response.json();
                 }else{
                     throw response;
@@ -517,10 +519,10 @@ class Header extends Component{
                                 <InputLabel htmlFor="password">Password</InputLabel>
                                 <Input id="password" type="password" password={this.state.password} onChange={this.onPasswordChange}/>
                                 <FormHelperText className={this.state.passwordRequired}><span className="red">required</span></FormHelperText>
+                                <br/>
+                                <FormHelperText className={this.state.loginErrorSpan}><span className="red">{this.state.loginError.message}</span></FormHelperText>
                             </FormControl><br/>
                             </div>
-                            <FormHelperText className={this.state.loginErrorSpan}><span className="red">{this.state.loginError.message}</span></FormHelperText>
-                            <br/><br/>
                             <Button variant="contained" color="primary" onClick={this.onLoginClick}>LOGIN</Button>
                         </TabContainer>}
                         {this.state.value ===1 &&
@@ -560,9 +562,11 @@ class Header extends Component{
                                 <Input id="contactno" type="text" contactno={this.state.signUpContactno} onChange={this.onSignUpContactNumberChange}/>
                                 <FormHelperText className={this.state.signUpcontactnoRequired}><span className="red">required</span></FormHelperText>
                                 <FormHelperText className={this.state.signUpcontactInvalid}><span className="red">Contact No. must contain only numbers and must be 10 digits long</span></FormHelperText>
+                                <br/>
+                                <FormHelperText className={this.state.signUpErrorSpan} ><span className="red">{this.state.signUpError.message}</span></FormHelperText>
                             </FormControl><br/>
                             </div>
-                            <FormHelperText className={this.state.signUpErrorSpan} ><span className="red">{this.state.signUpError.message}</span></FormHelperText>
+
                             <br/>
 
                             <Button variant="contained" color="primary" onClick={this.onSignUpClick}>SIGNUP</Button>
