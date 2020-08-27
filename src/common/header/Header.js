@@ -31,6 +31,7 @@ import './Header.css'
 import * as EmailVaildator from "email-validator";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import {Link} from 'react-router-dom';
+import Notification from "../notification/Notification";
 
 
 
@@ -61,7 +62,7 @@ const css  =  {
     },
     inputSearch:{
         color:'#ffffff',
-        width: '300px'
+        width: '250px'
     },
     user:{
         textTransform:'unset',
@@ -71,6 +72,7 @@ const css  =  {
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'start',
+        padding:'0px'
     },
     userDiv:{
         alignContent:'center',
@@ -141,8 +143,13 @@ class Header extends Component{
             signUpErrorSpan:'dispNone',
             loginError:{},
             loginErrorSpan:'dispNone',
-            loggedIn: sessionStorage.getItem("access-token") !== null,
+            loggedIn: sessionStorage.getItem("access-token") == null ? false : true,
+            messageText:null,
+            notificationOpen:false,
+
         }
+        this.loggedinMessage ="Logged in successfully!";
+        this.closeNotification = this.closeNotification.bind(this);
     }
 
     openModalHandler = () => {
@@ -170,7 +177,9 @@ class Header extends Component{
                 loginError:{},
                 loginErrorSpan:'dispNone',
             })
+
     }
+
 
     closeModal =()=>{
         this.setState({ modalIsOpen: false })
@@ -221,10 +230,12 @@ class Header extends Component{
                 }).then(function(data){
                     sessionStorage.setItem("uuid", data.id);
                     sessionStorage.setItem("first-name", data.first_name)
+                    that.showNotification(that.loggedinMessage);
                     that.setState({loginErrorSpan:'dispNone'})
                     that.setState({value:0});
                     that.setState({ loggedIn: true });
                     that.closeModal();
+
                 }).catch( err => {
                     err.text().then( errorMessage => {
                         that.setState({loginErrorSpan:'dispBlock'})
@@ -292,9 +303,6 @@ class Header extends Component{
         }
     }
 
-    onCLickingMyProfile=()=>{
-        this.props.history.push("/profile/");
-    }
 
     isFirstNameEmpty =(firstname) =>{
         if(firstname===""){
@@ -419,6 +427,11 @@ class Header extends Component{
     onChangeOfEmail=(e)=>{
         this.setState({email:e.target.value})
     }
+    showNotification = (message) => this.setState({messageText: message, notificationOpen: true});
+    closeNotification = () => this.setState({messageText: null, notificationOpen: false});
+
+
+
 
 
 
@@ -557,7 +570,8 @@ class Header extends Component{
 
                         }
                     </Modal>
-
+                    <Notification messageText={this.state.messageText} open={this.state.notificationOpen}
+                                  onClose={this.closeNotification}/>
                 </Box>
             );
         }
