@@ -1,9 +1,6 @@
 import React,{Component} from "react";
 import {
-    fade,
     ThemeProvider,
-    withStyles,
-    makeStyles,
     createMuiTheme,
 } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -188,7 +185,6 @@ class Header extends Component{
 
     onTabChange=(event,value)=>{
         this.setState({value});
-
     }
     openMenuHandler = (event) => {
         this.setState({anchorEl:event.currentTarget});
@@ -222,7 +218,6 @@ class Header extends Component{
                 const headers={'Accept':'application/json','authorization':"Basic " + window.btoa(this.state.contactno + ":" + this.state.password)}
                 fetch("http://localhost:8080/api/customer/login",{method:'POST',headers}).then(function (response){
                     if(response.status === 200){
-                        console.log("log in successful: "+  response.headers.get('access-token')+ "");
                         sessionStorage.setItem("access-token",  response.headers.get('access-token'));
                         return response.json();
                     }else{
@@ -241,7 +236,6 @@ class Header extends Component{
                     err.text().then( errorMessage => {
                         that.setState({loginErrorSpan:'dispBlock'})
                         that.setState({loginError:JSON.parse(errorMessage)})
-                        console.log("Login failed: "+ that.state.loginError.message);
                     })
                 })
             }
@@ -274,7 +268,6 @@ class Header extends Component{
         }
         if(isAnyValidationFailed===false && isAnyRequiredFieldEmpty===false){
             let that=this;
-            console.log("making api call");
             let dataSignUp = JSON.stringify({
                 "email_address": this.state.email,
                 "first_name": this.state.firstName,
@@ -285,7 +278,6 @@ class Header extends Component{
             const headers = {'Accept': 'application/json','Content-Type': 'application/json'}
             fetch("http://localhost:8080/api/customer/signup",{method:'POST',headers,body:dataSignUp}).then(function (response){
                 if(response.status === 201){
-                    console.log("Sign up successful");
                     that.setState({signUpErrorSpan:'dispNone'})
                     that.setState({signUpError:{}})
                     that.setState({value:0});
@@ -354,7 +346,6 @@ class Header extends Component{
     }
 
     isPasswordEmptyForLogin=(password)=>{
-        console.log("invoking password empty check: " + password.length )
         if(password===""){
             this.setState({passwordRequired:'dispBlock'})
             return true;
@@ -397,7 +388,6 @@ class Header extends Component{
     }
 
     isPasswordValid =(password) =>{
-        console.log("isPasswordValid: " + password);
         const isValidPassword = new RegExp('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$');
         if(!isValidPassword.test(password) && !this.isPasswordEmpty(password)){
             this.setState({signUpPasswordInvalid:'dispBlock'})
@@ -431,12 +421,6 @@ class Header extends Component{
     }
     showNotification = (message) => this.setState({messageText: message, notificationOpen: true});
     closeNotification = () => this.setState({messageText: null, notificationOpen: false});
-
-
-
-
-
-
 
 
         render()
@@ -510,14 +494,14 @@ class Header extends Component{
                             <div className="form-fields">
                             <FormControl required>
                                 <InputLabel htmlFor="contactno">Contact No.</InputLabel>
-                                <Input id="contactno" type="text" contactno={this.state.contactno} onChange={this.onContactNumberChange}/>
+                                <Input id="contactno" type="text" value={this.state.contactno} contactno={this.state.contactno} onChange={this.onContactNumberChange}/>
                                 <FormHelperText className={this.state.contactnoRequired}><span className="red">required</span></FormHelperText>
                                 <FormHelperText className={this.state.loginContactInvalid}><span className="red">Invalid Contact</span></FormHelperText>
                             </FormControl>
                             <br/>
                             <FormControl required>
                                 <InputLabel htmlFor="password">Password</InputLabel>
-                                <Input id="password" type="password" password={this.state.password} onChange={this.onPasswordChange}/>
+                                <Input id="password" type="password" value={this.state.password} password={this.state.password} onChange={this.onPasswordChange}/>
                                 <FormHelperText className={this.state.passwordRequired}><span className="red">required</span></FormHelperText>
                                 <br/>
                                 <FormHelperText className={this.state.loginErrorSpan}><span className="red">{this.state.loginError.message}</span></FormHelperText>
@@ -528,20 +512,20 @@ class Header extends Component{
                         {this.state.value ===1 &&
                         <TabContainer>
                             <div className="form-fields">
-                            <FormControl>
+                            <FormControl required>
                                 <InputLabel htmlFor="firstName">First Name</InputLabel>
-                                <Input id="firstName" type="text" firstname={this.state.firstName} onChange={this.onChangeOfFirstName}/>
+                                <Input id="firstName" type="text" value={this.state.firstName} firstname={this.state.firstName} onChange={this.onChangeOfFirstName}/>
                                 <FormHelperText className={this.state.firstNameRequired}><span className="red">required</span></FormHelperText>
                             </FormControl>
                             <br/>
                             <FormControl>
                                 <InputLabel  htmlFor="lastName" >Last Name</InputLabel>
-                                <Input id="lastName" type="text" lastname={this.state.lastName} onChange={this.onChangeOfLastName}/>
+                                <Input id="lastName" type="text" value={this.state.lastName} lastname={this.state.lastName} onChange={this.onChangeOfLastName}/>
                             </FormControl>
                             <br/>
-                            <FormControl>
+                            <FormControl required>
                                 <InputLabel htmlFor="email">Email</InputLabel>
-                                <Input id="email" type="email" email={this.state.email} onChange={this.onChangeOfEmail}/>
+                                <Input id="email" type="email" value={this.state.email} email={this.state.email} onChange={this.onChangeOfEmail}/>
                                 <FormHelperText className={this.state.emailRequired}>
                                     <span className="red">required</span>
                                 </FormHelperText>
@@ -550,21 +534,21 @@ class Header extends Component{
                                 </FormHelperText>
                             </FormControl>
                             <br/>
-                            <FormControl>
+                            <FormControl required>
                                 <InputLabel htmlFor="password">Password</InputLabel>
-                                <Input id="password" type="password" password={this.state.signUpPassword} onChange={this.onSignUpPasswordChange}/>
+                                <Input id="signuppassword" type="password" value={this.state.signUpPassword} password={this.state.signUpPassword} onChange={this.onSignUpPasswordChange}/>
                                 <FormHelperText className={this.state.signUpPasswordRequired}><span className="red">required</span></FormHelperText>
                                 <FormHelperText className={this.state.signUpPasswordInvalid}><span className="red">Password must contain at least one capital letter, one small letter, one number, and one special character</span></FormHelperText>
                             </FormControl>
                             <br/>
-                            <FormControl>
+                            <FormControl required>
                                 <InputLabel htmlFor="contactno">Contact No.</InputLabel>
-                                <Input id="contactno" type="text" contactno={this.state.signUpContactno} onChange={this.onSignUpContactNumberChange}/>
+                                <Input id="signupcontactno" type="text" value={this.state.signUpContactno} contactno={this.state.signUpContactno} onChange={this.onSignUpContactNumberChange}/>
                                 <FormHelperText className={this.state.signUpcontactnoRequired}><span className="red">required</span></FormHelperText>
                                 <FormHelperText className={this.state.signUpcontactInvalid}><span className="red">Contact No. must contain only numbers and must be 10 digits long</span></FormHelperText>
                                 <br/>
                                 <FormHelperText className={this.state.signUpErrorSpan} ><span className="red">{this.state.signUpError.message}</span></FormHelperText>
-                            </FormControl><br/>
+                            </FormControl>
                             </div>
 
                             <br/>

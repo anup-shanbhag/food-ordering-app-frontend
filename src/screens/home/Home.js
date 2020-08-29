@@ -7,7 +7,6 @@ import Header from "../../common/header/Header";
 import "../../../node_modules/font-awesome/css/font-awesome.css"
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
-console.log(window.innerHeight);
 const withMediaQuery = () => Component => props => {
     const isXtraSmallScreen = useMediaQuery('(max-width:650px)');
     const isSmallScreen = useMediaQuery('(max-width:1000px)');
@@ -24,7 +23,10 @@ class Home extends Component {
             restaurants: [],
             loading: false
         }
+        this.handleRestaurantNavigation = this.handleRestaurantNavigation.bind(this);
     }
+
+    handleRestaurantNavigation = (restaurantId) => this.restaurantDetails(restaurantId);
 
     componentDidMount() {
         this.mounted = true;
@@ -53,9 +55,9 @@ class Home extends Component {
                                         <Box key={restaurant.id}
                                              className={this.props.isXtraSmallScreen ? "card-mainXSM" :
                                                  (this.props.isSmallScreen ? "card-mainSM" :
-                                                     (this.props.isMediumScreen ? "card-mainM" : "card-main"))}
-                                             onClick={() => this.restaurantDetails(restaurant.id)}>
-                                            <HomeRCard restaurant={restaurant}/>
+                                                     (this.props.isMediumScreen ? "card-mainM" : "card-main"))}>
+                                            <HomeRCard restaurant={restaurant}
+                                                       handleRestaurantNavigation={this.handleRestaurantNavigation}/>
                                         </Box>
                                     ))}
                         </div>

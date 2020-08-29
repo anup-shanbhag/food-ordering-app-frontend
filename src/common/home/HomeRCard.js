@@ -10,7 +10,7 @@ import "font-awesome/css/font-awesome.css"
 export default function HomeRCard(props) {
 
     return (
-            <Card className="restaurant-card-main">
+            <Card className="restaurant-card-main" onClick={props.handleRestaurantNavigation.bind(this, props.restaurant.id)}>
                 <CardActionArea className="restaurant-card">
                     <CardMedia
                         component="img"
@@ -23,9 +23,11 @@ export default function HomeRCard(props) {
                         <Typography gutterBottom variant="h5" component="h2">
                             {props.restaurant.restaurant_name}
                         </Typography>
+                        <br/>
                         <Typography variant="body2" component="p">
                             {props.restaurant.categories}
                         </Typography>
+                        <br/>
                     </CardContent>
                     <CardContent className="card-section2">
                         <Typography variant="body1" className="card-rating">

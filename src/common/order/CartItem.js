@@ -26,7 +26,8 @@ const useStyles = makeStyles({
         textAlign: 'center',
     },
     amount: {
-        textAlign: 'end !important'
+        textAlign: 'end !important',
+        color: 'gray'
     },
     addRemoveIcon:{
         justifyContent: 'center',
@@ -42,6 +43,9 @@ const useStyles = makeStyles({
         '& p': {
             width: '20px',
         },
+        '& .MuiSvgIcon-root': {
+            color: '#000',
+        }
     }
 });
 

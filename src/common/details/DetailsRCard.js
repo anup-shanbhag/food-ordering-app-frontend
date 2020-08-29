@@ -28,7 +28,7 @@ export default function DetailsRCard(props) {
                         <Typography variant="body1" color="textPrimary">
                             <i className="fa fa-star" aria-hidden="true"/> {props.restaurant.customer_rating}
                         </Typography>
-                        <Typography variant="body1" color="textSecondary" className="upper-case">
+                        <Typography variant="body2" color="textSecondary" className="upper-case">
                             Average Rating By <br/> {props.restaurant.number_customers_rated} customers
                         </Typography>
                     </div>
@@ -36,7 +36,7 @@ export default function DetailsRCard(props) {
                         <Typography variant="body1" color="textPrimary">
                             <i className="fa fa-inr" aria-hidden="true"/> {props.restaurant.average_price}
                         </Typography>
-                        <Typography variant="body1" color="textSecondary" className="upper-case">
+                        <Typography variant="body2" color="textSecondary" className="upper-case">
                             Average Cost For <br/> Two People
                         </Typography>
                     </div>

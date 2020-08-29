@@ -188,9 +188,13 @@ class Checkout extends React.Component {
             JSON.stringify(address)), callback, this.handleSaveAddress);
 
     placeOrder = () => {
-        CallApi(GetEndpointURI('Save Order'),
-            GetHttpHeaders('POST', "Bearer " + window.sessionStorage.getItem("access-token"),
-                JSON.stringify(this.state.order)), this.handleOrderConfirmation);
+        if(this.state.activeStep === 2) {
+            CallApi(GetEndpointURI('Save Order'),
+                GetHttpHeaders('POST', "Bearer " + window.sessionStorage.getItem("access-token"),
+                    JSON.stringify(this.state.order)), this.handleOrderConfirmation);
+        }else {
+            this.handleOrderConfirmation(false, null);
+        }
     }
 
     getStepContent = (step) => {
