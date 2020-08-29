@@ -40,8 +40,8 @@ const useStyles = makeStyles((theme) => ({
         height: 'auto',
     },
     selected: {
-        boxShadow: '3px 3px 8px 0px darkgrey',
-        borderColor: 'darkgrey',
+        boxShadow: '2px 2px 8px 0px #f50057',
+        borderColor: '#f50057',
         border: 'solid',
     },
     addressCard: {

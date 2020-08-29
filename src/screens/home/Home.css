@@ -31,7 +31,7 @@
 
 .restaurant-card, .restaurant-card-main {
     max-width: 300px !important;
-    height: 340px ;
+    /*height: 340px ;*/
     margin: auto;
 }
 

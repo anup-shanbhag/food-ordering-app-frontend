@@ -150,7 +150,6 @@
 .cart-total {
     display: flex;
     margin: 10px auto auto;
-    color: gray;
 }
 
 .cart-total p {
