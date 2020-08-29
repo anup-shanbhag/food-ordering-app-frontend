@@ -197,10 +197,12 @@ class Header extends Component{
         sessionStorage.removeItem('access-token');
         sessionStorage.removeItem('uuid');
         sessionStorage.removeItem('first-name');
+
         this.setState({
             loggedIn: false
         })
         this.handleMenuClose();
+        {console.log(window.location.href.substring(window.location.href.indexOf("/")))}
     }
 
     onLoginClick=()=>{
@@ -475,7 +477,8 @@ class Header extends Component{
                                        <MenuItem><Link
                                            to={"/profile"} style={{textDecoration: 'none', color: 'black'}}>My
                                            Profile</Link></MenuItem>
-                                       <MenuItem onClick={this.logout}>Logout</MenuItem>
+                                       <MenuItem onClick={this.logout}><Link
+                                           to={"/"} style={{textDecoration: 'none', color: 'black'}}>Logout</Link></MenuItem>
                                    </Menu>
                                </div>
                             }

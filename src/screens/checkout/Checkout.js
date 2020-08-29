@@ -70,6 +70,7 @@ const withMediaQuery = () => Component => props => {
 };
 
 
+
 class Checkout extends React.Component {
     constructor(props) {
         super(props);
@@ -129,9 +130,11 @@ class Checkout extends React.Component {
     handleOrderConfirmation = (result, response) => {
         if (result) {
             this.showNotification(this.msgSaveOrderOK.replace("$orderId", response.id));
+            setTimeout(() => {  this.props.history.push("/"); }, 5000);
         } else {
             this.showNotification(this.msgSaveOrderNotOK);
         }
+
     }
     showNotification = (message) => this.setState({messageText: message, notificationOpen: true});
     closeNotification = () => this.setState({messageText: null, notificationOpen: false});
