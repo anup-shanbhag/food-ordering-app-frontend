@@ -40,6 +40,7 @@ const theme = createMuiTheme({
     },
 });
 
+//css for header bar
 const css  =  {
     appBar: {
         backgroundColor: '#263238',
@@ -81,6 +82,7 @@ const css  =  {
     }
 }
 
+//css for modal
 const costumStyles = {
     content: {
         top: '50%',
@@ -93,7 +95,7 @@ const costumStyles = {
 }
 
 
-
+//media query for responsiveness
 const withMediaQuery = () => Component => props => {
     const isSmallScreen = useMediaQuery('(max-width:650px)');
     return <Component isSmallScreen={isSmallScreen} {...props} />;
@@ -111,6 +113,7 @@ TabContainer.propTypes = {
     children: PropTypes.node.isRequired
 }
 
+// Header section rendering
 class Header extends Component{
 
     constructor(props) {
@@ -118,29 +121,33 @@ class Header extends Component{
         this.state = {
             modalIsOpen: false,
             value:0,
+            //state variables for login
             contactno:"",
             contactnoRequired:'dispNone',
             loginContactInvalid:'dispNone',
-            contactInvalid:'dispNone',
             password:"",
             passwordRequired:'dispNone',
-            signUpPassword:"",
-            signUpPasswordRequired:'dispNone',
-            signUpPasswordInvalid:'dispNone',
-            signUpContactno:"",
-            signUpcontactnoRequired:'dispNone',
-            signUpcontactInvalid:'dispNone',
+            contactInvalid:'dispNone',
+            loginError:{},
+            loginErrorSpan:'dispNone',
+            loggedIn: sessionStorage.getItem("access-token") == null ? false : true,
+
+            //state variables for sign up
             firstName:"",
             firstNameRequired:'dispNone',
             lastName:"",
             email:"",
             emailRequired:'dispNone',
             emailInvalid:'dispNone',
+            signUpContactno:"",
+            signUpcontactnoRequired:'dispNone',
+            signUpcontactInvalid:'dispNone',
+            signUpPassword:"",
+            signUpPasswordRequired:'dispNone',
+            signUpPasswordInvalid:'dispNone',
             signUpError:{},
             signUpErrorSpan:'dispNone',
-            loginError:{},
-            loginErrorSpan:'dispNone',
-            loggedIn: sessionStorage.getItem("access-token") == null ? false : true,
+
             messageText:null,
             notificationOpen:false,
 
@@ -150,6 +157,8 @@ class Header extends Component{
         this.closeNotification = this.closeNotification.bind(this);
     }
 
+
+    //function to reset the state variables once the modal is closed and reopened
     openModalHandler = () => {
             this.setState({
                 modalIsOpen: true,contactno:"",
@@ -175,24 +184,28 @@ class Header extends Component{
                 loginError:{},
                 loginErrorSpan:'dispNone',
             })
-
     }
 
-
+     //closing modal
     closeModal =()=>{
         this.setState({ modalIsOpen: false })
     }
 
+    //changing the tab on modal
     onTabChange=(event,value)=>{
         this.setState({value});
     }
+
+
     openMenuHandler = (event) => {
         this.setState({anchorEl:event.currentTarget});
     };
+
     handleMenuClose=()=>{
         this.setState({anchorEl:null});
     }
 
+    //clearing the session variables on logout
     logout=()=>{
         sessionStorage.removeItem('access-token');
         sessionStorage.removeItem('uuid');
@@ -205,27 +218,35 @@ class Header extends Component{
 
     onLoginClick=()=>{
         let isAnyRequiredFieldEmpty=false;
+        //checking if contact number is empty
         if(this.isContactNumberEmptyForLogin(this.state.contactno)){
             isAnyRequiredFieldEmpty=true;
         }
+        //check is the password is empty
         if(this.isPasswordEmptyForLogin(this.state.password)){
             isAnyRequiredFieldEmpty=true;
         }
-        if(isAnyRequiredFieldEmpty===false){
 
+        //Do further validation of user input only if both input fields are not empty
+        if(isAnyRequiredFieldEmpty===false){
+            //try to login only if the contact number is valid
             if(this.isValidContactNoForLogin(this.state.contactno)){
                 let that= this;
                 const headers={'Accept':'application/json','authorization':"Basic " + window.btoa(this.state.contactno + ":" + this.state.password)}
                 fetch("http://localhost:8080/api/customer/login",{method:'POST',headers}).then(function (response){
                     if(response.status === 200){
+                        //set session variable access token.
                         sessionStorage.setItem("access-token",  response.headers.get('access-token'));
                         return response.json();
                     }else{
+                        //throw error if login fails
                         throw response;
                     }
                 }).then(function(data){
+                    //on successful login set other session variables
                     sessionStorage.setItem("uuid", data.id);
                     sessionStorage.setItem("first-name", data.first_name)
+                    //set state variables in case of successful login
                     that.showNotification(that.loggedinMessage);
                     that.setState({loginErrorSpan:'dispNone'})
                     that.setState({value:0});
@@ -234,15 +255,16 @@ class Header extends Component{
 
                 }).catch( err => {
                     err.text().then( errorMessage => {
+                        //display error in case of failure to login
                         that.setState({loginErrorSpan:'dispBlock'})
                         that.setState({loginError:JSON.parse(errorMessage)})
                     })
                 })
             }
         }
-
     }
     onSignUpClick=()=> {
+        //check if any required input field is empty
         let isAnyRequiredFieldEmpty=false;
         let isAnyValidationFailed=true;
         if (this.isFirstNameEmpty(this.state.firstName)) {
@@ -257,6 +279,7 @@ class Header extends Component{
         if (this.isEmailEmpty(this.state.email)) {
             isAnyRequiredFieldEmpty = true;
         }
+        //check if user inputs are valid
         if (!this.isEmailIdValid(this.state.email)) {
             isAnyValidationFailed = false;
         }
@@ -266,6 +289,7 @@ class Header extends Component{
         if (!this.isValidContactNo(this.state.signUpContactno)) {
             isAnyValidationFailed = false;
         }
+        //try to register the user only when are required inout fields are not empty and are valid inputs
         if(isAnyValidationFailed===false && isAnyRequiredFieldEmpty===false){
             let that=this;
             let dataSignUp = JSON.stringify({
@@ -278,6 +302,7 @@ class Header extends Component{
             const headers = {'Accept': 'application/json','Content-Type': 'application/json'}
             fetch("http://localhost:8080/api/customer/signup",{method:'POST',headers,body:dataSignUp}).then(function (response){
                 if(response.status === 201){
+                    //set state variables on successful registration
                     that.setState({signUpErrorSpan:'dispNone'})
                     that.setState({signUpError:{}})
                     that.setState({value:0});
@@ -287,13 +312,12 @@ class Header extends Component{
                     throw response;
                 }
             }).catch( err => {
+                ////set state variables on failure to register the user
                 err.text().then( errorMessage => {
                     that.setState({signUpErrorSpan:'dispBlock'})
                     that.setState({signUpError:JSON.parse(errorMessage)})
-
                 })
             })
-
         }
     }
 
@@ -317,6 +341,7 @@ class Header extends Component{
             return false;
         }
     }
+
     isContactNumberEmpty =(contactno)=>{
         if(contactno===""){
             this.setState({signUpcontactnoRequired:'dispBlock'})
@@ -428,6 +453,7 @@ class Header extends Component{
             return (
                 <Box>
                     <AppBar position="static" style={css.appBar}>
+                        {/*checking for screen size to make app responsive in smaller screen*/}
                         <Toolbar style={this.props.isSmallScreen ? css.toolBarSM : css.toolBar} >
                             <IconButton edge="start" color="inherit">
                                 <FastfoodIcon/>
@@ -447,8 +473,10 @@ class Header extends Component{
                                     </ThemeProvider>
                                 </Box>: null
                             }
+                            {/*checking for screen size to make app responsive in smaller screen*/}
                             {this.props.isSmallScreen ? <br/> :null}
                             {
+                                /*show login button if user is not logged in and show user first name if he is logged in*/
                                 this.state.loggedIn===false ? <Button
                                 variant="contained"
                                 size="large"
@@ -475,10 +503,12 @@ class Header extends Component{
                                        <MenuItem><Link
                                            to={"/profile"} style={{textDecoration: 'none', color: 'black'}}>My
                                            Profile</Link></MenuItem>
-                                       <MenuItem onClick={this.logout}>Logout</MenuItem>
+                                       <MenuItem onClick={this.logout}><Link
+                                           to={"/"} style={{textDecoration: 'none', color: 'black'}}>Logout</Link></MenuItem>
                                    </Menu>
                                </div>
                             }
+                            {/*checking for screen size to make app responsive in smaller screen*/}
                             {this.props.isSmallScreen ? <br/> :null}
                         </Toolbar>
                     </AppBar>
@@ -559,7 +589,7 @@ class Header extends Component{
                         }
                     </Modal>
                     <Notification messageText={this.state.messageText} open={this.state.notificationOpen}
-                                  onClose={this.closeNotification}/>
+                              onClose={this.closeNotification}/>
                 </Box>
             );
         }

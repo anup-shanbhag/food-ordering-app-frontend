@@ -16,6 +16,7 @@ import {
     makeStyles
 } from '@material-ui/core/styles';
 
+//media query for responsiveness
 const useStyles = makeStyles({
     show: {
         display: 'block'
@@ -28,6 +29,8 @@ const useStyles = makeStyles({
         marginTop: "3%",
     },
 });
+
+// Component for Save Address section
 export default function SaveAddressForm(props) {
     const [flatname, setFlatname] = React.useState("");
     const [locality, setLocality] = React.useState("");

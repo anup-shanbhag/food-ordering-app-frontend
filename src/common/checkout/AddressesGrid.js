@@ -19,7 +19,7 @@ import {
     makeStyles
 } from '@material-ui/core/styles';
 
-
+//media query for responsiveness
 const useStyles = makeStyles((theme) => ({
     active: {
         fill: 'green',
@@ -70,6 +70,7 @@ const getState = (length, index) => {
     return state;
 }
 
+// Component for Existing Address grid section
 export default function AddressesGrid(props) {
     const [selected, setSelected] = React.useState(
         (props.addresses !== null && props.addresses.length > 0) ?

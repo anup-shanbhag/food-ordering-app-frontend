@@ -7,6 +7,7 @@ import {
 
 import Close from '@material-ui/icons/Close';
 
+// Component for Snackerbar section
 export default function Notification(props) {
 
     return (

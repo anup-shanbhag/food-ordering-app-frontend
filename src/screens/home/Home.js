@@ -16,6 +16,7 @@ const withMediaQuery = () => Component => props => {
                       isXtraSmallScreen={isXtraSmallScreen} {...props} />;
 };
 
+// Home page rendering
 class Home extends Component {
 
     constructor() {

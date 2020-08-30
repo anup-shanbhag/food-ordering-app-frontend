@@ -10,7 +10,7 @@ import {
     Typography
 } from '@material-ui/core';
 
-
+// Component for Payment section
 export default function PaymentOptions(props) {
     const [paymentMode, setPaymentMode] = React.useState(props.selectedPaymentMode);
     const onPaymentModeChanged = (e) => {

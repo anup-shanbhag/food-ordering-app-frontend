@@ -5,6 +5,7 @@ import Details from "./screens/details/Details";
 import Checkout from "./screens/checkout/Checkout";
 import Profile from "./screens/profile/Profile"
 
+// Class to handle Routing
 class FoodOrderingApp extends Component{
     constructor() {
         super();

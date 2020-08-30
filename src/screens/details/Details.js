@@ -8,12 +8,14 @@ import DetailsCartCard from "../../common/details/DetailsCartCard";
 import Notification from "../../common/notification/Notification";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
+// Constants for varying screen size
 const withMediaQuery = () => Component => props => {
     const isSmallScreen = useMediaQuery('(max-width:700px)');
     const isMediumScreen = useMediaQuery('(max-width:1000px)');
     return <Component isSmallScreen={isSmallScreen} isMediumScreen={isMediumScreen} {...props} />;
 };
 
+// Details page rendering
 class Details extends Component {
     constructor() {
         super();
@@ -103,6 +105,7 @@ class Details extends Component {
         )
     }
 
+    // Fetches the restaurant from backend
     getRestaurant() {
         const headers = {'Accept': 'application/json'};
         let that = this;
@@ -124,9 +127,12 @@ class Details extends Component {
         });
     }
 
+    // show notification on Snackerbar
     showNotification = (message) => this.setState({messageText: message, notificationOpen: true});
+    // close Snackerbar notification
     closeNotification = () => this.setState({messageText: null, notificationOpen: false});
 
+    // function to handle item into cart
     addToCartHandler = (item) => {
         let totalAmount = this.state.totalAmount;
         let totalItems = this.state.totalItems;
@@ -158,14 +164,13 @@ class Details extends Component {
         this.showNotification(this.msgItemAdded);
     }
 
+    // function to increase quantity of item in cart
     increaseCartItemHandler = (item) => {
         const index = this.state.cartItems.findIndex(cItem => cItem.id === item.id);
         const updateItem = this.state.cartItems[index];
         updateItem.quantity = this.state.cartItems[index].quantity + 1;
         updateItem.price = this.state.cartItems[index].price + item.itemPrice;
         this.setState(item);
-
-
         let totalAmount = this.state.totalAmount;
         let totalItems = this.state.totalItems;
         totalAmount += item.itemPrice;
@@ -175,6 +180,7 @@ class Details extends Component {
         this.showNotification(this.msgItemIncreased);
     }
 
+    // function to decrease quantity of item in cart
     decreaseCartItemHandler = (item) => {
         const index = this.state.cartItems.findIndex(cItem => cItem.id === item.id);
         const updateItem = this.state.cartItems[index];
@@ -195,6 +201,7 @@ class Details extends Component {
         this.setState({totalItems: totalItems});
     }
 
+    // function to navigate to checkout page
     checkout = () => {
         if(this.state.cartItems.length === 0){
             this.showNotification(this.msgEmptyCart);

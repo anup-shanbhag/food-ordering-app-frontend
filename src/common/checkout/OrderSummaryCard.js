@@ -14,6 +14,7 @@ import {
 import OrderItem from "../order/CartItem";
 import "font-awesome/css/font-awesome.css"
 
+// Component for Order Summary Card section
 export default function OrderSummaryCard(props) {
 
     return (
@@ -34,7 +35,7 @@ export default function OrderSummaryCard(props) {
                         {
                             props.orderItems && props.orderItems.length > 0 &&
                                     props.orderItems.map( orderItem => (
-                                        <OrderItem key={orderItem.id}
+/* Cart Item component */           <OrderItem key={orderItem.id}
                                                    cartItem={orderItem} variant={"subtitle2"}/>
                                         ))
                         }
