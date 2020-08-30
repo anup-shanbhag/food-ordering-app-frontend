@@ -1,5 +1,6 @@
 import Config from "./Config";
 
+// function to make rest call
 const CallApi = async (endpoint, headers, ...callbacks) => {
     let response = await fetch(endpoint, headers);
     let jsonResponse = await response.json();
@@ -7,6 +8,7 @@ const CallApi = async (endpoint, headers, ...callbacks) => {
         callback(true, jsonResponse) : callback(false, null));
 }
 
+// function to get endpoint uri
 const GetEndpointURI = (name, param, value) => {
     let uri = Config.endpointPrefix + Config.endpoints.find(endpoint => endpoint.name === name).uri;
     if (param && value) {
@@ -16,6 +18,7 @@ const GetEndpointURI = (name, param, value) => {
     }
 }
 
+// function to get headers
 const GetHttpHeaders = (httpMethod, accessToken, content) => {
     let settings = {
         method: httpMethod,

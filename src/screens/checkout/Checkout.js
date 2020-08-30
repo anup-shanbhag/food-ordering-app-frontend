@@ -28,6 +28,7 @@ import {GetEndpointURI, GetHttpHeaders, CallApi} from "../../common/utils/ApiHel
 import Header from "../../common/header/Header";
 import "./Checkout.css";
 
+//media query for responsiveness
 const useStyles = (theme) => ({
     checkoutContainer: {
         flexDirection: 'row',
@@ -70,7 +71,7 @@ const withMediaQuery = () => Component => props => {
 };
 
 
-
+// Checkout page rendering
 class Checkout extends React.Component {
     constructor(props) {
         super(props);
