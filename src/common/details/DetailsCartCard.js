@@ -8,6 +8,7 @@ import CartItem from "../order/CartItem";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 
+// Component for Details Cart Card section
 export default function DetailsCartCard(props) {
     let variant = props.isSmallScreen ? "subtitle2" : (props.isMediumScreen ? "subtitle1" : "body1") ;
     return(
