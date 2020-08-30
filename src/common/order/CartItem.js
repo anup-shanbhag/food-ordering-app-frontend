@@ -6,6 +6,7 @@ import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from '@material-ui/icons/Remove';
 import { makeStyles } from '@material-ui/core/styles';
 
+//media query for responsiveness
 const useStyles = makeStyles({
         cartItemMain: {
         flexDirection: 'row',
@@ -49,6 +50,7 @@ const useStyles = makeStyles({
     }
 });
 
+// Component for Cart Item section
 export default function CartItem(props) {
 
     const classes = useStyles();
