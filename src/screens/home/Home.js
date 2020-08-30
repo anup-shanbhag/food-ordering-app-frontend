@@ -7,6 +7,7 @@ import Header from "../../common/header/Header";
 import "../../../node_modules/font-awesome/css/font-awesome.css"
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
+// Constants for varying screen size
 const withMediaQuery = () => Component => props => {
     const isXtraSmallScreen = useMediaQuery('(max-width:650px)');
     const isSmallScreen = useMediaQuery('(max-width:1000px)');
@@ -28,6 +29,7 @@ class Home extends Component {
 
     handleRestaurantNavigation = (restaurantId) => this.restaurantDetails(restaurantId);
 
+//
     componentDidMount() {
         this.mounted = true;
         this.getRestaurants();
@@ -36,8 +38,10 @@ class Home extends Component {
     render() {
         return (
             <div>
+                {/* Render components only after mounted is true */}
                 {this.mounted === true ?
                     <div>
+                        {/* Render Header component */}
                         <Header searchHandler={this.searchHandler} showSearch={true}/>
                         {this.state.loading === true ?
                             <Typography className="loading-spinner" variant="h4"
@@ -56,6 +60,7 @@ class Home extends Component {
                                              className={this.props.isXtraSmallScreen ? "card-mainXSM" :
                                                  (this.props.isSmallScreen ? "card-mainSM" :
                                                      (this.props.isMediumScreen ? "card-mainM" : "card-main"))}>
+                                            {/* Render Restaurant cards components */}
                                             <HomeRCard restaurant={restaurant}
                                                        handleRestaurantNavigation={this.handleRestaurantNavigation}/>
                                         </Box>
@@ -67,7 +72,7 @@ class Home extends Component {
         );
     }
 
-    //fetches the restaurants from backend
+    // Fetches the restaurants from backend
     getRestaurants = () => {
         const headers = {'Accept': 'application/json'}
         let that = this;
@@ -87,10 +92,12 @@ class Home extends Component {
         });
     }
 
+    // Navigate to Restaurant Details page along with restaurantID clicked
     restaurantDetails = (restaurantId) => {
         this.props.history.push("/restaurant/" + restaurantId);
     }
 
+    // Function to search for Restaurant
     searchHandler = (event) => {
         let that = this;
         const headers = {'Accept': 'application/json'}
