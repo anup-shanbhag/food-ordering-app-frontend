@@ -12,7 +12,7 @@ export default function Notification(props) {
 
     return (
         <Snackbar anchorOrigin={{vertical: 'bottom', horizontal: 'left',}} open={props.open}
-                  autoHideDuration={3000} onClose={props.onClose} message={props.messageText}
+                  autoHideDuration={2500} onClose={props.onClose} message={props.messageText}
                   action={<IconButton size="small" color="inherit" onClick={props.onClose}><Close
                       fontSize="small"/></IconButton>}/>
     );
