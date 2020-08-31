@@ -99,6 +99,7 @@ class Checkout extends React.Component {
         this.setAddresses = this.setAddresses.bind(this);
         this.saveAddress = this.saveAddress.bind(this);
         this.msgSaveOrderNotOK = "Unable to place your order! Please try again!";
+        this.msgOrderIncomplete = "Please select delivery address & payment method before placing an order!";
         this.msgSaveOrderOK = "Order placed successfully! Your order ID is $orderId.";
         this.msgSaveAddressNotOK = "Unable to save address! Please try again!";
         this.msgSaveAddressOK = "Address saved successfully!";
@@ -131,7 +132,9 @@ class Checkout extends React.Component {
     handleOrderConfirmation = (result, response) => {
         if (result) {
             this.showNotification(this.msgSaveOrderOK.replace("$orderId", response.id));
-            setTimeout(() => {  this.props.history.push("/"); }, 5000);
+            setTimeout(() => {
+                this.props.history.push("/");
+            }, 3000);
         } else {
             this.showNotification(this.msgSaveOrderNotOK);
         }
@@ -150,7 +153,7 @@ class Checkout extends React.Component {
     setPaymentMethodId = (id) => {
         let order = JSON.parse(JSON.stringify(this.state.order));
         order.payment_id = id;
-        this.setState({ order: order });
+        this.setState({order: order});
     }
 
     setAddresses = (result, response) => {
@@ -197,7 +200,7 @@ class Checkout extends React.Component {
                 GetHttpHeaders('POST', "Bearer " + window.sessionStorage.getItem("access-token"),
                     JSON.stringify(this.state.order)), this.handleOrderConfirmation);
         }else {
-            this.handleOrderConfirmation(false, null);
+            this.showNotification(this.msgOrderIncomplete);
         }
     }
 
@@ -225,7 +228,7 @@ class Checkout extends React.Component {
             case 1:
                 return (<PaymentOptions paymentModes={this.state.paymentMethods}
                                         setPaymentModeId={this.setPaymentMethodId}
-                                        selectedPaymentMode={ (!this.state.order) ? null : this.state.order.payment_id}/>);
+                                        selectedPaymentMode={(!this.state.order) ? null : this.state.order.payment_id}/>);
             default:
                 return 'Unknown step';
         }
